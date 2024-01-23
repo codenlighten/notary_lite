@@ -9,31 +9,63 @@
   </head>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: "Roboto", sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
     }
     .mainContainer {
       max-width: 800px;
-      margin: 0 auto;
+      margin: 20px auto;
       padding: 20px;
-      word-wrap: break-word;
+      background: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    h1,
+    h2,
+    a {
+      color: #2bd8de; /* Primary color for headers and links */
     }
     h1 {
       text-align: center;
+      text-shadow: 0 1px 0 #333;
     }
     h2 {
       margin-top: 40px;
+      text-shadow: 0 1px 0 #333;
     }
     form {
       display: flex;
       flex-direction: column;
       margin-bottom: 20px;
     }
-    input {
+    input,
+    button {
+      padding: 10px;
       margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
     }
     button {
-      width: 100px;
-      margin-top: 10px;
+      background-color: #2bd8de; /* Primary color for buttons */
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #29c2c9; /* Slightly darker shade for hover effect */
+    }
+    p {
+      background-color: #e9ecef;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .result {
+      word-break: break-all;
+      display: none;
     }
   </style>
   <body>
@@ -44,7 +76,7 @@
         <input type="text" name="data" placeholder="Enter data to publish" />
         <button type="submit">Publish</button>
       </form>
-      <p id="publishResult"></p>
+      <p class="result" id="publishResult"></p>
 
       <!-- Form for Hashing Data -->
       <h2>Hash Data</h2>
@@ -52,7 +84,7 @@
         <input type="text" name="data" placeholder="Enter data to hash" />
         <button type="submit">Hash</button>
       </form>
-      <p id="hashResult"></p>
+      <p class="result" id="hashResult"></p>
 
       <!-- Form for Signing Data -->
       <h2>Sign Data</h2>
@@ -60,7 +92,7 @@
         <input type="text" name="data" placeholder="Enter data to sign" />
         <button type="submit">Sign</button>
       </form>
-      <p id="signResult"></p>
+      <p class="result" id="signResult"></p>
 
       <!-- Form for Verifying Data -->
       <h2>Verify Data</h2>
@@ -70,7 +102,7 @@
         <input type="text" name="address" placeholder="Enter address" />
         <button type="submit">Verify</button>
       </form>
-      <p id="verifyResult"></p>
+      <p class="result" id="verifyResult"></p>
     </div>
     <script>
       const Buffer = bsv.deps.Buffer;
@@ -170,6 +202,7 @@
             document.getElementById(resultElementId).innerHTML = txStatus
               ? `<a href="https://whatsonchain.com/tx/${data}" target="_blank">${data}</a>`
               : data;
+            document.getElementById(resultElementId).style.display = "block";
           })
           .catch((error) => {
             console.error("Error:", error);
