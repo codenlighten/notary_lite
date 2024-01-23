@@ -137,13 +137,7 @@ app.post("/hash", (req, res) => {
     const data = req.body.data;
     const sig = req.body.signature;
     const hash = hashData(data);
-    const txid = publishOpReturn([
-      "NotaryHash",
-      "text/plain",
-      data,
-      hash.toString(),
-      sig,
-    ]);
+    const txid = publishOpReturn([data, "text/plain", hash.toString(), sig]);
     busy = false;
     res.send(txid);
   } catch (e) {
