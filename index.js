@@ -111,6 +111,7 @@ app.post("/publish", async (req, res) => {
     const hash = req.body.hash;
     const sig = req.body.signature;
     const address = req.body.address;
+    const publicKey = req.body.publicKey;
     const txid = await publishOpReturn([data, hash, sig, address]);
     busy = false;
     res.send(txid);
