@@ -169,14 +169,22 @@ app.post("/registerId", async (req, res) => {
     busy = true;
     const data = req.body.data;
     const encryptedData = req.body.encryptedData;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
     const birthdate = req.body.birthdate;
-    const country = req.body.country;
-    const password = req.body.password;
+    let country = req.body.country;
+    let password = req.body.password;
+    //lowercase
+    firstName = firstName.toLowerCase();
+    lastName = lastName.toLowerCase();
+    country = country.toLowerCase();
+    //remove spaces
+    firstName = firstName.replace(/\s/g, "");
+    lastName = lastName.replace(/\s/g, "");
+    country = country.replace(/\s/g, "");
     const hash = req.body.hash;
     const signature = req.body.signature;
-    const address = req.body.address;
+    let address = req.body.address;
     const publicKey = req.body.publicKey;
     const txid = await publishOpReturn(
       "text/plain",
