@@ -13,6 +13,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const wif = process.env.FUNDING_WIF;
 const fundingAddress = process.env.FUNDING_ADDRESS;
 const monitorinAddress = process.env.MONITORING_ADDRESS;
+const registeredAddress = process.env.REGISTERED_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
@@ -52,7 +53,14 @@ const broadcast = async (tx) => {
     console.log(e);
   }
 };
-const publishOpReturn = async (mimetype, data, signature, address, hash) => {
+const publishOpReturn = async (
+  mimetype,
+  data,
+  signature,
+  address,
+  hash,
+  monitor
+) => {
   try {
     const utxos = await getUtxos();
     if (utxos.length === 0) {
@@ -92,7 +100,7 @@ const publishOpReturn = async (mimetype, data, signature, address, hash) => {
     //1 sat to monitoring address
     tx.addOutput(
       new bsv.Transaction.Output({
-        script: bsv.Script.buildPublicKeyHashOut(monitorinAddress),
+        script: bsv.Script.buildPublicKeyHashOut(monitor),
         satoshis: 1,
       })
     );
@@ -175,7 +183,8 @@ app.post("/registerId", async (req, res) => {
       encryptedData,
       signature,
       address,
-      hash
+      hash,
+      registeredAddress
     );
     busy = false;
     approvedPublicKeys.push(publicKey);
@@ -234,7 +243,14 @@ app.post("/publish", async (req, res) => {
     const sig = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
+    const txid = await publishOpReturn(
+      "text/plain",
+      data,
+      sig,
+      address,
+      hash,
+      monitorinAddress
+    );
     busy = false;
     res.send(txid);
   } catch (e) {
@@ -260,7 +276,14 @@ app.post("/publishFile", async (req, res) => {
     const address = req.body.address;
     const publicKey = req.body.publicKey;
     // Use 'data' if the function expects a buffer
-    const txid = await publishOpReturn(mimeType, data, sig, address, hash);
+    const txid = await publishOpReturn(
+      mimeType,
+      data,
+      sig,
+      address,
+      hash,
+      monitorinAddress
+    );
 
     busy = false;
     res.send(txid);
@@ -283,7 +306,14 @@ app.post("/hash", async (req, res) => {
   const address = req.body.address;
   const hash = hashData(data);
   try {
-    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
+    const txid = await publishOpReturn(
+      "text/plain",
+      data,
+      sig,
+      address,
+      hash,
+      monitorinAddress
+    );
     if (!txid) {
       res.send("error");
       return;
@@ -310,7 +340,8 @@ app.post("/sign", async (req, res) => {
       data,
       result,
       address,
-      hash
+      hash,
+      monitorinAddress
     );
     res.send(txid);
   } catch (e) {
@@ -339,7 +370,14 @@ app.post("/api/postdata", async (req, res) => {
     const sig = signData(data, keys.privateKey);
     const result = verifyData(data, sig, address);
     console.log(result);
-    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
+    const txid = await publishOpReturn(
+      "text/plain",
+      data,
+      sig,
+      address,
+      hash,
+      monitorinAddress
+    );
     res.send({ txid, hash, publicKey, keys });
   } catch (e) {
     console.log(e);
