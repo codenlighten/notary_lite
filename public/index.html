@@ -11,78 +11,67 @@
     body {
       font-family: sans-serif;
     }
-    input {
-      width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    button {
-      padding: 0.5rem;
-      margin-bottom: 1rem;
+    .mainContainer {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
     }
     h1 {
       text-align: center;
     }
     h2 {
-      margin-top: 2rem;
+      margin-top: 40px;
     }
-
-    #publishForm,
-    #hashForm,
-    #signForm,
-    #verifyForm {
-      max-width: 500px;
-      margin: 0 auto;
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
     }
-
-    #publishResult,
-    #hashResult,
-    #signResult,
-    #verifyResult {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 1rem;
-      border: 1px solid #ccc;
-      background-color: #eee;
+    input {
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100px;
+      margin-top: 10px;
     }
   </style>
   <body>
-    <h1>Blockchain Data Manager</h1>
+    <div class="mainContainer">
+      <h1>Blockchain Data Manager</h1>
+      <h2>Publish Data</h2>
+      <form id="publishForm">
+        <input type="text" name="data" placeholder="Enter data to publish" />
+        <button type="submit">Publish</button>
+      </form>
+      <p id="publishResult"></p>
 
-    <!-- Form for Publishing Data -->
-    <h2>Publish Data</h2>
-    <form id="publishForm">
-      <input type="text" name="data" placeholder="Enter data to publish" />
-      <button type="submit">Publish</button>
-    </form>
-    <p id="publishResult"></p>
+      <!-- Form for Hashing Data -->
+      <h2>Hash Data</h2>
+      <form id="hashForm">
+        <input type="text" name="data" placeholder="Enter data to hash" />
+        <button type="submit">Hash</button>
+      </form>
+      <p id="hashResult"></p>
 
-    <!-- Form for Hashing Data -->
-    <h2>Hash Data</h2>
-    <form id="hashForm">
-      <input type="text" name="data" placeholder="Enter data to hash" />
-      <button type="submit">Hash</button>
-    </form>
-    <p id="hashResult"></p>
+      <!-- Form for Signing Data -->
+      <h2>Sign Data</h2>
+      <form id="signForm">
+        <input type="text" name="data" placeholder="Enter data to sign" />
+        <button type="submit">Sign</button>
+      </form>
+      <p id="signResult"></p>
 
-    <!-- Form for Signing Data -->
-    <h2>Sign Data</h2>
-    <form id="signForm">
-      <input type="text" name="data" placeholder="Enter data to sign" />
-      <button type="submit">Sign</button>
-    </form>
-    <p id="signResult"></p>
-
-    <!-- Form for Verifying Data -->
-    <h2>Verify Data</h2>
-    <form id="verifyForm">
-      <input type="text" name="data" placeholder="Enter data" />
-      <input type="text" name="sig" placeholder="Enter signature" />
-      <input type="text" name="address" placeholder="Enter address" />
-      <button type="submit">Verify</button>
-    </form>
-    <p id="verifyResult"></p>
-
+      <!-- Form for Verifying Data -->
+      <h2>Verify Data</h2>
+      <form id="verifyForm">
+        <input type="text" name="data" placeholder="Enter data" />
+        <input type="text" name="sig" placeholder="Enter signature" />
+        <input type="text" name="address" placeholder="Enter address" />
+        <button type="submit">Verify</button>
+      </form>
+      <p id="verifyResult"></p>
+    </div>
     <script>
       const Buffer = bsv.deps.Buffer;
       const hashData = (data) => {
@@ -134,7 +123,8 @@
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
             },
-            "publishResult"
+            "publishResult",
+            true
           );
         });
 
@@ -167,7 +157,7 @@
           );
         });
 
-      function sendData(url, data, resultElementId) {
+      function sendData(url, data, resultElementId, txStatus) {
         fetch(url, {
           method: "POST",
           headers: {
@@ -177,7 +167,9 @@
         })
           .then((response) => response.text())
           .then((data) => {
-            document.getElementById(resultElementId).textContent = data;
+            document.getElementById(resultElementId).innerHTML = txStatus
+              ? `<a href="https://whatsonchain.com/tx/${data}" target="_blank">${data}</a>`
+              : data;
           })
           .catch((error) => {
             console.error("Error:", error);
