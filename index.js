@@ -9,7 +9,7 @@ const path = require("path");
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-
+const fs = require("fs");
 const wif = process.env.FUNDING_WIF;
 const fundingAddress = process.env.FUNDING_ADDRESS;
 const monitorinAddress = process.env.MONITORING_ADDRESS;
@@ -19,6 +19,14 @@ const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
 
 const approvedPublicKeys = [];
+//check if file exists authorized.json
+if (fs.existsSync("authorized.json")) {
+  const data = fs.readFileSync("authorized.json", "utf8");
+  const json = JSON.parse(data);
+  json.forEach((item) => {
+    approvedPublicKeys.push(item);
+  });
+}
 
 let busy = false;
 const getUtxos = async () => {
@@ -200,6 +208,10 @@ app.post("/registerId", async (req, res) => {
     );
     busy = false;
     approvedPublicKeys.push(publicKey);
+    fs.writeFileSync(
+      "authorized.json",
+      JSON.stringify(approvedPublicKeys, null, 2)
+    );
     res.send(txid);
   } catch (e) {
     busy = false;
@@ -220,6 +232,7 @@ app.post("/login", async (req, res) => {
     const signature = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
+
     //check if public key is approved
     if (!approvedPublicKeys.includes(publicKey)) {
       res.send("not approved");
