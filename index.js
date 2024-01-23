@@ -141,12 +141,13 @@ app.post("/publishFile", async (req, res) => {
       return;
     }
     busy = true;
-    const data = req.body.data;
+    const base64 = req.body.data;
     const mimeType = req.body.mimeType;
     const hash = req.body.hash;
     const sig = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
+    const data = Buffer.from(base64, "base64");
     const txid = await publishOpReturn(mimeType, data, hash, sig);
     busy = false;
     res.send(txid);

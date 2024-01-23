@@ -204,7 +204,7 @@
           const file = this.file.files[0];
           const mimeType = file.type;
           const reader = new FileReader();
-          reader.readAsArrayBuffer(file);
+          reader.readAsDataURL(file);
           reader.onload = () => {
             const hash = hashData(reader.result);
             const signature = signData(reader.result);
@@ -213,7 +213,7 @@
             sendData(
               "/publishFile",
               {
-                data: reader.result,
+                data: reader.result.split(",")[1], // remove "data:application/pdf;base64," from the data url [1
                 mimeType: mimeType,
                 hash: hash,
                 signature: signature,
