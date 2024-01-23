@@ -18,7 +18,7 @@ const generateKeys = (path = defaultPath) => {
   console.log("address:", address.toString());
 };
 
-// generateKeys();
+generateKeys();
 
 module.exports = {
   generateKeys,

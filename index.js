@@ -12,6 +12,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const wif = process.env.FUNDING_WIF;
 const fundingAddress = process.env.FUNDING_ADDRESS;
+const monitorinAddress = process.env.MONITORING_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
@@ -88,7 +89,13 @@ const publishOpReturn = async (mimetype, data, signature, address, hash) => {
         satoshis: 0,
       })
     );
-
+    //1 sat to monitoring address
+    tx.addOutput(
+      new bsv.Transaction.Output({
+        script: bsv.Script.buildPublicKeyHashOut(monitorinAddress),
+        satoshis: 1,
+      })
+    );
     // Calculate transaction fee (consider increasing the fee rate if necessary)
     const feePerKb = 0.015; // This is just an example rate
     const estimatedSize = tx._estimateSize();
@@ -96,7 +103,7 @@ const publishOpReturn = async (mimetype, data, signature, address, hash) => {
 
     // Calculate change
     const totalSats = utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0);
-    const change = totalSats - fee;
+    const change = totalSats - fee - 1;
     if (change < 0) {
       throw new Error("Insufficient funds for fee");
     }
