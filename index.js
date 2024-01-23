@@ -47,11 +47,30 @@ const broadcast = async (tx) => {
   }
 };
 
-const publishOpReturn = async (data) => {
+const publishOpReturn = async (mimetype, data, signature, hash) => {
   const utxos = await getUtxos();
   const tx = new bsv.Transaction().from(utxos);
-  const opArray = ["17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x", ...data];
-  const opReturnArray = opArray.map((d) => Buffer.from(d));
+  const opArray = ["17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x"];
+  let opReturnArray = [];
+  if (mimetype === "text/plain") {
+    opArray.push(...data);
+    opArray.push("text/plain");
+    opArray.push(signature);
+    opArray.push(hash);
+    opReturnArray = opArray.map((d) => Buffer.from(d));
+  } else {
+    opArray.push(data);
+    opArray.push(mimetype);
+    opArray.push(signature);
+    opArray.push(hash);
+    opArray.forEach((d) => {
+      if (typeof d === "string") {
+        opReturnArray.push(Buffer.from(d));
+      } else {
+        opReturnArray.push(d);
+      }
+    });
+  }
   data.map((d) => Buffer.from(d));
   const opReturn = bsv.Script.buildSafeDataOut(opReturnArray);
   tx.addOutput(
@@ -112,13 +131,30 @@ app.post("/publish", async (req, res) => {
     const sig = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-    const txid = await publishOpReturn([
-      "text/plain",
-      data,
-      hash,
-      sig,
-      address,
-    ]);
+    const txid = await publishOpReturn("text/plain", data, hash, sig);
+    busy = false;
+    res.send(txid);
+  } catch (e) {
+    console.log(e);
+    res.send("error");
+  }
+});
+
+// app.post to handle the file data publish to blockchain
+app.post("/publishFile", async (req, res) => {
+  try {
+    if (busy) {
+      res.send("busy");
+      return;
+    }
+    busy = true;
+    const data = req.body.data;
+    const mimeType = req.body.mimeType;
+    const hash = req.body.hash;
+    const sig = req.body.signature;
+    const address = req.body.address;
+    const publicKey = req.body.publicKey;
+    const txid = await publishOpReturn([mimeType, data, hash, sig]);
     busy = false;
     res.send(txid);
   } catch (e) {
@@ -137,7 +173,7 @@ app.post("/hash", (req, res) => {
     const data = req.body.data;
     const sig = req.body.signature;
     const hash = hashData(data);
-    const txid = publishOpReturn([data, "text/plain", hash.toString(), sig]);
+    const txid = publishOpReturn("text/plain", hash, sig);
     busy = false;
     res.send(txid);
   } catch (e) {

@@ -78,6 +78,14 @@
       </form>
       <p class="result" id="publishResult"></p>
 
+      <!-- publish pdf file -->
+      <h2>Publish PDF File</h2>
+      <form id="publishFileForm">
+        <input type="file" name="file" placeholder="Enter data to publish" />
+        <button type="submit">Publish</button>
+      </form>
+      <p class="result" id="publishResult"></p>
+
       <!-- Form for Hashing Data -->
       <h2>Hash Data</h2>
       <form id="hashForm">
@@ -187,6 +195,35 @@
             },
             "verifyResult"
           );
+        });
+
+      document
+        .getElementById("publishFileForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const file = this.file.files[0];
+          const mimeType = file.type;
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(file);
+          reader.onload = () => {
+            const hash = hashData(reader.result);
+            const signature = signData(reader.result);
+            console.log(hash.toString("hex"));
+            console.log(signature);
+            sendData(
+              "/publishFile",
+              {
+                data: reader.result,
+                mimeType: mimeType,
+                hash: hash,
+                signature: signature,
+                publicKey: localStorage.getItem("publicKey"),
+                address: localStorage.getItem("address"),
+              },
+              "publishResult",
+              true
+            );
+          };
         });
 
       function sendData(url, data, resultElementId, txStatus) {
