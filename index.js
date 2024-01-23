@@ -144,9 +144,7 @@ const publishOpReturn = async (
 
 const hashData = (data) => {
   const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
-  const bn = bsv.crypto.BN.fromBuffer(hash);
-  const address = new bsv.PrivateKey(bn).toAddress();
-  return address;
+  return hash.toString("hex");
 };
 const signData = (data, wifString) => {
   const privateKey = bsv.PrivateKey.fromWIF(wifString);
