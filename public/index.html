@@ -93,10 +93,25 @@
     #keys p {
       margin: 0;
     }
+    #logo {
+      display: block;
+      margin: 0 auto;
+      width: 200px;
+    }
+
+    @media (max-width: 600px) {
+      .mainContainer {
+        padding: 10px;
+      }
+      #logo {
+        width: 100px;
+      }
+    }
   </style>
   <body>
     <div class="mainContainer">
       <h1>NotaryHash</h1>
+      <img src="logo.png" alt="notaryhash" id="logo" />
       <p>
         This is a simple web app that allows you to publish data to the
         blockchain. It uses the
