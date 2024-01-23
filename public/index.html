@@ -147,7 +147,7 @@
         <input type="file" name="file" placeholder="Enter data to publish" />
         <button type="submit">Publish</button>
       </form>
-      <p class="result" id="publishResult"></p>
+      <p class="result" id="publishFileResult"></p>
 
       <!-- Form for Hashing Data -->
       <h2>Hash Data</h2>
@@ -377,7 +377,7 @@
                 publicKey: localStorage.getItem("publicKey"),
                 address: localStorage.getItem("address"),
               },
-              "publishResult",
+              "publishFileResult",
               true
             );
           };

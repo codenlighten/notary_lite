@@ -274,7 +274,8 @@ app.post("/publish", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress
+      monitorinAddress,
+      "publish"
     );
     busy = false;
     res.send(txid);
@@ -307,7 +308,8 @@ app.post("/publishFile", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress
+      monitorinAddress,
+      "publish"
     );
 
     busy = false;
@@ -337,7 +339,8 @@ app.post("/hash", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress
+      monitorinAddress,
+      "hash"
     );
     if (!txid) {
       res.send("error");
@@ -366,7 +369,8 @@ app.post("/sign", async (req, res) => {
       result,
       address,
       hash,
-      monitorinAddress
+      monitorinAddress,
+      "sign"
     );
     res.send(txid);
   } catch (e) {
@@ -401,7 +405,8 @@ app.post("/api/v1/postdata", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress
+      monitorinAddress,
+      "postdata"
     );
     res.send({ txid, hash, publicKey, keys });
   } catch (e) {
