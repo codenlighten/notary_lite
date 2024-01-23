@@ -20,6 +20,7 @@ const getUtxos = async () => {
     `https://api.whatsonchain.com/v1/bsv/main/address/${address.toString()}/unspent`
   );
   const json = await response.json();
+  console.log(json);
   const utxos = json.map((utxo) => {
     return new bsv.Transaction.UnspentOutput({
       txid: utxo.tx_hash,
@@ -188,7 +189,7 @@ app.post("/publishFile", async (req, res) => {
 });
 
 // app.post to handle the data publish to blockchain
-app.post("/hash", (req, res) => {
+app.post("/hash", async (req, res) => {
   try {
     if (busy) {
       res.send("busy");
@@ -199,7 +200,7 @@ app.post("/hash", (req, res) => {
     const sig = req.body.signature;
     const address = req.body.address;
     const hash = hashData(data);
-    const txid = publishOpReturn("text/plain", data, sig, address, hash);
+    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
     busy = false;
     res.send(txid);
   } catch (e) {
