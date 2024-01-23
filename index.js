@@ -112,7 +112,13 @@ app.post("/publish", async (req, res) => {
     const sig = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-    const txid = await publishOpReturn([data, hash, sig, address]);
+    const txid = await publishOpReturn([
+      data,
+      "text/plain",
+      hash,
+      sig,
+      address,
+    ]);
     busy = false;
     res.send(txid);
   } catch (e) {
