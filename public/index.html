@@ -193,7 +193,8 @@
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
             },
-            "hashResult"
+            "hashResult",
+            true
           );
         });
 
@@ -206,7 +207,7 @@
           console.log(hash.toString("hex"));
           console.log(signature);
           sendData(
-            "/hash",
+            "/sign",
             {
               data: this.data.value,
               hash: hash,
@@ -214,7 +215,8 @@
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
             },
-            "signResult"
+            "signResult",
+            true
           );
         });
 
