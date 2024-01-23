@@ -154,6 +154,7 @@ app.post("/publish", async (req, res) => {
     busy = false;
     res.send(txid);
   } catch (e) {
+    busy = false;
     console.log(e);
     res.send("error");
   }
@@ -174,13 +175,13 @@ app.post("/publishFile", async (req, res) => {
     const data = Buffer.from(base64, "base64");
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-
     // Use 'data' if the function expects a buffer
     const txid = await publishOpReturn(mimeType, data, sig, address, hash);
 
     busy = false;
     res.send(txid);
   } catch (e) {
+    busy = false;
     console.error(e);
     res.status(500).send("An error occurred while processing the request");
   }
