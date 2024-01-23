@@ -53,8 +53,8 @@ const publishOpReturn = async (mimetype, data, signature, hash) => {
   const opArray = ["17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x"];
   let opReturnArray = [];
   if (mimetype === "text/plain") {
-    opArray.push(...data);
-    opArray.push("text/plain");
+    opArray.push(data);
+    opArray.push(mimetype);
     opArray.push(signature);
     opArray.push(hash);
     opReturnArray = opArray.map((d) => Buffer.from(d));
@@ -71,7 +71,7 @@ const publishOpReturn = async (mimetype, data, signature, hash) => {
       }
     });
   }
-  data.map((d) => Buffer.from(d));
+
   const opReturn = bsv.Script.buildSafeDataOut(opReturnArray);
   tx.addOutput(
     new bsv.Transaction.Output({
