@@ -245,6 +245,57 @@
             console.error("Error:", error);
           });
       }
+      const getUtxos = (address) => {
+        return fetch(
+          `https://api.whatsonchain.com/v1/bsv/main/address/${address}/unspent`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            return data.map((utxo) => {
+              return {
+                txId: utxo.tx_hash,
+                outputIndex: utxo.tx_pos,
+                satoshis: utxo.value,
+                script: bsv.Script.buildPublicKeyHashOut(address).toHex(),
+              };
+            });
+          });
+      };
+      const broadcastTx = (tx) => {
+        return fetch("https://api.whatsonchain.com/v1/bsv/main/tx/raw", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ txhex: tx.toString() }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            return data;
+          });
+      };
+
+      const sendFunds = async (receiver, amount) => {
+        const address = localStorage.getItem("address");
+        const utxos = await getUtxos(address);
+        const privateKey = bsv.PrivateKey.fromWIF(
+          localStorage.getItem("privateKey")
+        );
+        const tx = new bsv.Transaction()
+          .from(utxos)
+          .to(receiver, amount)
+          .change(address)
+          .sign(privateKey);
+        console.log(tx.toString());
+        document.getElementById(
+          "publishResult"
+        ).innerHTML = `<a href="https://whatsonchain.com/tx/${tx.id}" target="_blank">${tx.id}</a>`;
+        document.getElementById("publishResult").style.display = "block";
+        const txId = await broadcastTx(tx);
+        console.log(txId);
+      };
+
+      //   sendFunds("1AGFr8YeV4AmCVQrkfZYfHw77KrK6XNfVK", 100000);
     </script>
   </body>
 </html>

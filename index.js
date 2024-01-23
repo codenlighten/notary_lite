@@ -230,6 +230,24 @@ app.post("/verify", (req, res) => {
   res.send(result);
 });
 
+const sendFunds = async (address, amount) => {
+  try {
+    const utxos = await getUtxos();
+    if (utxos.length === 0) {
+      return new Error("No UTXOs available");
+    }
+
+    const tx = new bsv.Transaction().from(utxos);
+    tx.to(address, amount);
+    tx.sign(privateKey);
+    const txid = await broadcast(tx);
+    return txid;
+  } catch (e) {
+    console.error("Error in sendFunds:", e.message);
+    throw e; // Rethrow the error after logging
+  }
+};
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
