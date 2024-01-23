@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockchain Data Manager</title>
+  </head>
+  <body>
+    <h1>Blockchain Data Manager</h1>
+
+    <!-- Form for Publishing Data -->
+    <h2>Publish Data</h2>
+    <form id="publishForm">
+      <input type="text" name="data" placeholder="Enter data to publish" />
+      <button type="submit">Publish</button>
+    </form>
+    <p id="publishResult"></p>
+
+    <!-- Form for Hashing Data -->
+    <h2>Hash Data</h2>
+    <form id="hashForm">
+      <input type="text" name="data" placeholder="Enter data to hash" />
+      <button type="submit">Hash</button>
+    </form>
+    <p id="hashResult"></p>
+
+    <!-- Form for Signing Data -->
+    <h2>Sign Data</h2>
+    <form id="signForm">
+      <input type="text" name="data" placeholder="Enter data to sign" />
+      <button type="submit">Sign</button>
+    </form>
+    <p id="signResult"></p>
+
+    <!-- Form for Verifying Data -->
+    <h2>Verify Data</h2>
+    <form id="verifyForm">
+      <input type="text" name="data" placeholder="Enter data" />
+      <input type="text" name="sig" placeholder="Enter signature" />
+      <input type="text" name="address" placeholder="Enter address" />
+      <button type="submit">Verify</button>
+    </form>
+    <p id="verifyResult"></p>
+
+    <script>
+      document
+        .getElementById("publishForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          sendData("/publish", { data: this.data.value }, "publishResult");
+        });
+
+      document
+        .getElementById("hashForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          sendData("/hash", { data: this.data.value }, "hashResult");
+        });
+
+      document
+        .getElementById("signForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          sendData("/sign", { data: this.data.value }, "signResult");
+        });
+
+      document
+        .getElementById("verifyForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          sendData(
+            "/verify",
+            {
+              data: this.data.value,
+              sig: this.sig.value,
+              address: this.address.value,
+            },
+            "verifyResult"
+          );
+        });
+
+      function sendData(url, data, resultElementId) {
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById(resultElementId).textContent = data;
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>

@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-const wif = process.env.WIF;
+const wif = process.env.FUNDING_WIF;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
@@ -55,6 +55,16 @@ const publishOpReturn = async (data) => {
     new bsv.Transaction.Output({
       script: opReturn,
       satoshis: 0,
+    })
+  );
+  const size = tx._estimateSize();
+  const fee = Math.ceil(size * 0.015);
+  const totalSats = utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0);
+  const change = totalSats - fee;
+  tx.addOutput(
+    new bsv.Transaction.Output({
+      script: bsv.Script.buildPublicKeyHashOut(address),
+      satoshis: change,
     })
   );
   tx.sign(privateKey);
