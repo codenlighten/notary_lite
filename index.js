@@ -113,8 +113,8 @@ app.post("/publish", async (req, res) => {
     const address = req.body.address;
     const publicKey = req.body.publicKey;
     const txid = await publishOpReturn([
-      data,
       "text/plain",
+      data,
       hash,
       sig,
       address,
@@ -137,9 +137,15 @@ app.post("/hash", (req, res) => {
     const data = req.body.data;
     const sig = req.body.signature;
     const hash = hashData(data);
-    const txid = publishOpReturn([data, "text/plain", hash.toString(), sig]);
+    const txid = publishOpReturn([
+      "NotaryHash",
+      "text/plain",
+      data,
+      hash.toString(),
+      sig,
+    ]);
     busy = false;
-    res.send(hash.toString());
+    res.send(txid);
   } catch (e) {
     console.log(e);
     res.send("error");
