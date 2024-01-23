@@ -167,18 +167,20 @@ app.post("/registerId", async (req, res) => {
       return;
     }
     busy = true;
-    const data = req.body.data;
+    let data = req.body.data;
     const encryptedData = req.body.encryptedData;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     const birthdate = req.body.birthdate;
     let country = req.body.country;
-    let password = req.body.password;
+    let passwordHash = req.body.password;
     //lowercase
+    data = data.toLowerCase();
     firstName = firstName.toLowerCase();
     lastName = lastName.toLowerCase();
     country = country.toLowerCase();
     //remove spaces
+    data = data.replace(/\s/g, "");
     firstName = firstName.replace(/\s/g, "");
     lastName = lastName.replace(/\s/g, "");
     country = country.replace(/\s/g, "");

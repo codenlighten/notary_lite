@@ -174,18 +174,18 @@
           ).toString("hex");
           const data = `${firstName}${lastName}${birthdate}${country}`;
 
-          const encryptedData = encrypt(data, password);
-          const hash = hashData(data);
-          const signature = signData(data);
+          const encryptedData = encrypt(data.toLowerCase(), password);
+          const hash = hashData(data.toLowerCase());
+          const signature = signData(data.toLowerCase());
           localStorage.setItem(
             "identity",
             JSON.stringify({
-              data: data,
+              data: data.toLowerCase(),
               encryptedData: encryptedData,
-              firstName: firstName,
-              lastName: lastName,
+              firstName: firstName.toLowerCase(),
+              lastName: lastName.toLowerCase(),
               birthdate: birthdate,
-              country: country,
+              country: country.toLowerCase(),
               password: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,
