@@ -50,7 +50,10 @@ const broadcast = async (tx) => {
 const publishOpReturn = async (data) => {
   const utxos = await getUtxos();
   const tx = new bsv.Transaction().from(utxos);
-  const opReturn = bsv.Script.buildSafeDataOut([data]);
+  const opArray = ["17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x", ...data];
+  const opReturnArray = opArray.map((d) => Buffer.from(d));
+  data.map((d) => Buffer.from(d));
+  const opReturn = bsv.Script.buildSafeDataOut(opReturnArray);
   tx.addOutput(
     new bsv.Transaction.Output({
       script: opReturn,
@@ -105,7 +108,10 @@ app.post("/publish", async (req, res) => {
     }
     busy = true;
     const data = req.body.data;
-    const txid = await publishOpReturn(data);
+    const hash = req.body.hash;
+    const sig = req.body.signature;
+    const address = req.body.address;
+    const txid = await publishOpReturn([data, hash, sig, address]);
     busy = false;
     res.send(txid);
   } catch (e) {

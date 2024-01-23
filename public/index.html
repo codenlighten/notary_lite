@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blockchain Data Manager</title>
+    <!-- bsv@1.5 cdn unpkg -->
+    <script src="https://unpkg.com/bsv@1.5"></script>
   </head>
   <body>
     <h1>Blockchain Data Manager</h1>
@@ -43,11 +45,58 @@
     <p id="verifyResult"></p>
 
     <script>
+      const Buffer = bsv.deps.Buffer;
+      const hashData = (data) => {
+        // Return the hash as a Buffer
+        return bsv.crypto.Hash.sha256(Buffer.from(data));
+      };
+
+      const signData = (data) => {
+        const privateKey = bsv.PrivateKey.fromWIF(
+          localStorage.getItem("privateKey")
+        );
+
+        // Use the hash buffer directly
+        const hashBuffer = hashData(data);
+        const signature = bsv.crypto.ECDSA.sign(hashBuffer, privateKey);
+
+        return signature.toString();
+      };
+      const verifyData = (data, sig, address) => {
+        const publicKey = new bsv.PublicKey(address);
+        const signature = new bsv.crypto.Signature(sig);
+        return bsv.crypto.ECDSA.verify(
+          Buffer.from(hashData(data)),
+          signature,
+          publicKey
+        );
+      };
+      //if not keys in local storage, create them
+      if (!localStorage.getItem("privateKey")) {
+        const privateKey = new bsv.PrivateKey();
+        localStorage.setItem("privateKey", privateKey.toString());
+        localStorage.setItem("publicKey", privateKey.toPublicKey().toString());
+        localStorage.setItem("address", privateKey.toAddress().toString());
+      }
       document
         .getElementById("publishForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          sendData("/publish", { data: this.data.value }, "publishResult");
+          const hash = hashData(this.data.value);
+          const signature = signData(this.data.value);
+          console.log(hash.toString("hex"));
+          console.log(signature);
+          sendData(
+            "/publish",
+            {
+              data: this.data.value,
+              hash: hash,
+              signature: signature,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            },
+            "publishResult"
+          );
         });
 
       document
