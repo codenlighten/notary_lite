@@ -215,10 +215,26 @@ app.post("/hash", async (req, res) => {
 });
 
 // app.post to handle the data publish to blockchain
-app.post("/sign", (req, res) => {
-  const data = req.body.data;
-  const sig = signData(data);
-  res.send(sig);
+app.post("/sign", async (req, res) => {
+  try {
+    const data = req.body.data;
+    const hash = req.body.hash;
+    const sig = req.body.signature;
+    const address = req.body.address;
+    const publicKey = req.body.publicKey;
+    const result = signData(data);
+    const txid = await publishOpReturn(
+      "text/plain",
+      data,
+      result,
+      address,
+      hash
+    );
+    res.send(txid);
+  } catch (e) {
+    console.log(e);
+    res.send("error");
+  }
 });
 
 // app.post to handle the data publish to blockchain
@@ -229,24 +245,6 @@ app.post("/verify", (req, res) => {
   const result = verifyData(data, sig, address);
   res.send(result);
 });
-
-const sendFunds = async (address, amount) => {
-  try {
-    const utxos = await getUtxos();
-    if (utxos.length === 0) {
-      return new Error("No UTXOs available");
-    }
-
-    const tx = new bsv.Transaction().from(utxos);
-    tx.to(address, amount);
-    tx.sign(privateKey);
-    const txid = await broadcast(tx);
-    return txid;
-  } catch (e) {
-    console.error("Error in sendFunds:", e.message);
-    throw e; // Rethrow the error after logging
-  }
-};
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

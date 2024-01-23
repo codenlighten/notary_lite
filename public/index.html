@@ -172,14 +172,42 @@
         .getElementById("hashForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          sendData("/hash", { data: this.data.value }, "hashResult");
+          const hash = hashData(this.data.value);
+          const signature = signData(this.data.value);
+          console.log(hash.toString("hex"));
+          console.log(signature);
+          sendData(
+            "/hash",
+            {
+              data: this.data.value,
+              hash: hash,
+              signature: signature,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            },
+            "hashResult"
+          );
         });
 
       document
         .getElementById("signForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          sendData("/sign", { data: this.data.value }, "signResult");
+          const hash = hashData(this.data.value);
+          const signature = signData(this.data.value);
+          console.log(hash.toString("hex"));
+          console.log(signature);
+          sendData(
+            "/hash",
+            {
+              data: this.data.value,
+              hash: hash,
+              signature: signature,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            },
+            "signResult"
+          );
         });
 
       document
