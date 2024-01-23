@@ -121,7 +121,8 @@ const hashData = (data) => {
   const address = new bsv.PrivateKey(bn).toAddress();
   return address;
 };
-const signData = (data) => {
+const signData = (data, wifString) => {
+  const privateKey = bsv.PrivateKey.fromWIF(wifString);
   const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
   const sig = bsv.crypto.ECDSA.sign(hash, privateKey).toString();
   return sig;
@@ -222,7 +223,7 @@ app.post("/sign", async (req, res) => {
     const sig = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-    const result = signData(data);
+    const result = signData(data, wif);
     const txid = await publishOpReturn(
       "text/plain",
       data,
@@ -244,6 +245,25 @@ app.post("/verify", (req, res) => {
   const address = req.body.address;
   const result = verifyData(data, sig, address);
   res.send(result);
+});
+
+//api to post data
+app.post("/api/postdata", async (req, res) => {
+  try {
+    const data = req.body.data;
+    const hash = hashData(data);
+    const keys = generateKeys();
+    const address = keys.address;
+    const publicKey = keys.publicKey;
+    const sig = signData(data, keys.privateKey);
+    const result = verifyData(data, sig, address);
+    console.log(result);
+    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
+    res.send({ txid, hash, publicKey, keys });
+  } catch (e) {
+    console.log(e);
+    res.send("error");
+  }
 });
 
 app.listen(port, () => {
