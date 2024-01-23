@@ -94,6 +94,17 @@
         <a href="https://bitcoinsv.com/" target="_blank">Bitcoin SV</a>
         blockchain.
       </p>
+      <div id="keys">
+        <h2>Keys</h2>
+        <p>
+          <strong>Public Key:</strong>
+          <span id="publicKey"></span>
+        </p>
+        <p>
+          <strong>Address:</strong>
+          <span id="address"></span>
+        </p>
+      </div>
       <h2>Publish Data</h2>
       <form id="publishForm">
         <input type="text" name="data" placeholder="Enter data to publish" />
@@ -191,6 +202,10 @@
         localStorage.setItem("publicKey", privateKey.toPublicKey().toString());
         localStorage.setItem("address", privateKey.toAddress().toString());
       }
+      document.getElementById("publicKey").innerHTML =
+        localStorage.getItem("publicKey");
+      document.getElementById("address").innerHTML =
+        localStorage.getItem("address");
       document
         .getElementById("publishForm")
         .addEventListener("submit", function (e) {
