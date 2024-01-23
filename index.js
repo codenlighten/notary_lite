@@ -50,28 +50,21 @@ const broadcast = async (tx) => {
 const publishOpReturn = async (mimetype, data, signature, hash) => {
   const utxos = await getUtxos();
   const tx = new bsv.Transaction().from(utxos);
-  const opArray = ["17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x"];
-  let opReturnArray = [];
-  if (mimetype === "text/plain") {
-    opArray.push(data);
-    opArray.push(mimetype);
-    opArray.push(signature);
-    opArray.push(hash);
-    opReturnArray = opArray.map((d) => Buffer.from(d));
-  } else {
-    opArray.push(data);
-    opArray.push(mimetype);
-    opArray.push(signature);
-    opArray.push(hash);
-    opArray.forEach((d) => {
-      if (typeof d === "string") {
-        opReturnArray.push(Buffer.from(d));
-      } else {
-        opReturnArray.push(d);
-      }
-    });
-  }
+  const opArray = [
+    "17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x",
+    data,
+    mimetype,
+    signature,
+    hash,
+  ];
 
+  const opReturnArray = opArray.map((item) => {
+    if (typeof item === "string") {
+      return Buffer.from(item);
+    } else {
+      return item;
+    }
+  });
   const opReturn = bsv.Script.buildSafeDataOut(opReturnArray);
   tx.addOutput(
     new bsv.Transaction.Output({
@@ -154,7 +147,7 @@ app.post("/publishFile", async (req, res) => {
     const sig = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-    const txid = await publishOpReturn([mimeType, data, hash, sig]);
+    const txid = await publishOpReturn(mimeType, data, hash, sig);
     busy = false;
     res.send(txid);
   } catch (e) {
