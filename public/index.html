@@ -166,7 +166,7 @@
             "/publish",
             {
               data: this.data.value,
-              hash: hash,
+              hash: hash.toString("hex"),
               signature: signature,
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
@@ -188,7 +188,7 @@
             "/hash",
             {
               data: this.data.value,
-              hash: hash,
+              hash: hash.toString("hex"),
               signature: signature,
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
@@ -210,7 +210,7 @@
             "/sign",
             {
               data: this.data.value,
-              hash: hash,
+              hash: hash.toString("hex"),
               signature: signature,
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
@@ -253,7 +253,7 @@
               {
                 data: reader.result.split(",")[1], // remove "data:application/pdf;base64," from the data url [1
                 mimeType: mimeType,
-                hash: hash,
+                hash: hash.toString("hex"),
                 signature: signature,
                 publicKey: localStorage.getItem("publicKey"),
                 address: localStorage.getItem("address"),
