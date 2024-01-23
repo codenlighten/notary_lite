@@ -46,7 +46,7 @@ const broadcast = async (tx) => {
     console.log(e);
   }
 };
-const publishOpReturn = async (mimetype, data, signature, hash) => {
+const publishOpReturn = async (mimetype, data, signature, address, hash) => {
   try {
     const utxos = await getUtxos();
     if (utxos.length === 0) {
@@ -54,13 +54,24 @@ const publishOpReturn = async (mimetype, data, signature, hash) => {
     }
 
     const tx = new bsv.Transaction().from(utxos);
-
+    // MAP SET app <appame> type publish | AIP BITCOIN_ECDSA <address> <signature>
     // Ensure data is in the correct format
     const bufferArray = [
       "17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x",
       data,
       mimetype,
+      "MAP",
+      "SET",
+      "app",
+      "NotaryHash",
+      "type",
+      "publish",
+      "|",
+      "AIP",
+      "BITCOIN_ECDSA",
+      address,
       signature,
+      "hash",
       hash,
     ].map((item) => (Buffer.isBuffer(item) ? item : Buffer.from(item)));
 
@@ -139,7 +150,7 @@ app.post("/publish", async (req, res) => {
     const sig = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-    const txid = await publishOpReturn("text/plain", data, hash, sig);
+    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
     busy = false;
     res.send(txid);
   } catch (e) {
@@ -161,9 +172,11 @@ app.post("/publishFile", async (req, res) => {
     const hash = req.body.hash;
     const sig = req.body.signature;
     const data = Buffer.from(base64, "base64");
+    const address = req.body.address;
+    const publicKey = req.body.publicKey;
 
     // Use 'data' if the function expects a buffer
-    const txid = await publishOpReturn(mimeType, data, hash, sig);
+    const txid = await publishOpReturn(mimeType, data, sig, address, hash);
 
     busy = false;
     res.send(txid);
@@ -183,8 +196,9 @@ app.post("/hash", (req, res) => {
     busy = true;
     const data = req.body.data;
     const sig = req.body.signature;
+    const address = req.body.address;
     const hash = hashData(data);
-    const txid = publishOpReturn("text/plain", hash, sig);
+    const txid = publishOpReturn("text/plain", data, sig, address, hash);
     busy = false;
     res.send(txid);
   } catch (e) {
