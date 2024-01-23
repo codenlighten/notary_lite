@@ -59,7 +59,8 @@ const publishOpReturn = async (
   signature,
   address,
   hash,
-  monitor
+  monitor,
+  type = "publish"
 ) => {
   try {
     const utxos = await getUtxos();
@@ -79,7 +80,7 @@ const publishOpReturn = async (
       "app",
       "NotaryHash",
       "type",
-      "publish",
+      type,
       "|",
       "AIP",
       "BITCOIN_ECDSA",
@@ -194,7 +195,8 @@ app.post("/registerId", async (req, res) => {
       signature,
       address,
       hash,
-      registeredAddress
+      registeredAddress,
+      "register"
     );
     busy = false;
     approvedPublicKeys.push(publicKey);
