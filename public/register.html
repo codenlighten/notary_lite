@@ -4,8 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registration</title>
-    <!-- bsv@1.5 cdn unpkg -->
     <script src="https://unpkg.com/bsv@1.5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-message.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-mnemonic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-ecies.min.js"></script>
   </head>
   <style>
     body {
@@ -113,6 +115,27 @@
     </div>
     <script src="encryption.js"></script>
     <script>
+      const Buffer = bsv.deps.Buffer;
+      const generateKeys = () => {
+        if (address && !confirm("Generate new keys?")) {
+          return;
+        }
+        const Mnemonic = bsv.Mnemonic;
+        const mnemonic = new Mnemonic();
+        const fullPath = "m/44'/0'/0'/0/0";
+        const xpriv = mnemonic.toHDPrivateKey(); // HD Private Key
+        const derivedPriv = xpriv.deriveChild(fullPath); // Derive the private key using the full path
+        const priv = derivedPriv.privateKey; // Get the actual private key
+        const pub = bsv.PublicKey.fromPrivateKey(priv); // Derive the public key from the private key
+        address = bsv.Address.fromPublicKey(pub).toString();
+        const jsonString = JSON.stringify({
+          address: address,
+          privateKey: priv.toString(),
+          publicKey: pub.toString(),
+          mnemonic: mnemonic.toString(),
+        });
+        return jsonString;
+      };
       const encrypt = (myString, myPassword) => {
         //crypto-js
         const cryptoJS = window.CryptoJS;
@@ -132,7 +155,7 @@
         const plaintext = bytes.toString(cryptoJS.enc.Utf8);
         return plaintext;
       };
-      const Buffer = bsv.deps.Buffer;
+
       const hashData = (data) => {
         // Return the hash as a Buffer
         return bsv.crypto.Hash.sha256(Buffer.from(data));
@@ -160,10 +183,16 @@
       };
       //if not keys in local storage, create them
       if (!localStorage.getItem("privateKey")) {
-        const privateKey = new bsv.PrivateKey();
-        localStorage.setItem("privateKey", privateKey.toString());
-        localStorage.setItem("publicKey", privateKey.toPublicKey().toString());
-        localStorage.setItem("address", privateKey.toAddress().toString());
+        const jsonString = generateKeys();
+        const keys = JSON.parse(jsonString);
+        const privateKey = bsv.PrivateKey.fromWIF(keys.privateKey);
+        const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
+        const address = bsv.Address.fromPublicKey(publicKey).toString();
+        const mnemonic = keys.mnemonic;
+        localStorage.setItem("privateKey", privateKey);
+        localStorage.setItem("publicKey", publicKey);
+        localStorage.setItem("address", address);
+        localStorage.setItem("mnemonic", mnemonic);
       }
       document
         .getElementById("publishForm")
