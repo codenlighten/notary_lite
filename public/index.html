@@ -195,6 +195,7 @@
           privateKey: priv.toString(),
           publicKey: pub.toString(),
           mnemonic: mnemonic.toString(),
+          path: fullPath,
         });
         return jsonString;
       };
@@ -251,10 +252,12 @@
         const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
         const address = bsv.Address.fromPublicKey(publicKey).toString();
         const mnemonic = keys.mnemonic;
+        const path = keys.path;
         localStorage.setItem("privateKey", privateKey);
         localStorage.setItem("publicKey", publicKey);
         localStorage.setItem("address", address);
         localStorage.setItem("mnemonic", mnemonic);
+        localStorage.setItem("path", path);
       }
       document.getElementById("publicKey").innerHTML =
         localStorage.getItem("publicKey");
