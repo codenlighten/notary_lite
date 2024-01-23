@@ -385,7 +385,7 @@ app.post("/verify", (req, res) => {
 });
 
 //api to post data
-app.post("/api/postdata", async (req, res) => {
+app.post("/api/v1/postdata", async (req, res) => {
   try {
     const data = req.body.data;
     const hash = hashData(data);
