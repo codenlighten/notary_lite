@@ -209,10 +209,11 @@
               address: localStorage.getItem("address"),
             },
             "publishResult",
+            true,
             true
           );
         });
-      function sendData(url, data, resultElementId, txStatus) {
+      function sendData(url, data, resultElementId, txStatus, registerStatus) {
         fetch(url, {
           method: "POST",
           headers: {
@@ -226,6 +227,9 @@
               ? `<a href="https://whatsonchain.com/tx/${data}" target="_blank">${data}</a>`
               : data;
             document.getElementById(resultElementId).style.display = "block";
+            if (registerStatus) {
+              localStorage.setItem("registered", true);
+            }
           })
           .catch((error) => {
             console.error("Error:", error);

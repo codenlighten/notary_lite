@@ -114,6 +114,10 @@
           <strong>Address:</strong>
           <span id="address"></span>
         </p>
+        <p>
+          <strong>Verified:</strong>
+          <span id="verified"></span>
+        </p>
       </div>
       <h2>Publish Data</h2>
       <form id="publishForm">
@@ -216,6 +220,14 @@
         localStorage.getItem("publicKey");
       document.getElementById("address").innerHTML =
         localStorage.getItem("address");
+      if (localStorage.getItem("verified") === "true") {
+        document.getElementById("verified").innerHTML = "Yes";
+      } else {
+        document.getElementById(
+          "verified"
+        ).innerHTML = `No. Please visit <a href="https://notaryhash.com/register" target="_blank">Notary Hash Register Page</a> to register your address.`;
+      }
+
       document
         .getElementById("publishForm")
         .addEventListener("submit", function (e) {
