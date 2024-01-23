@@ -6,8 +6,8 @@ const { generateKeys } = require("./keys");
 const app = express();
 const port = process.env.PORT || 3000;
 const path = require("path");
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 const wif = process.env.FUNDING_WIF;
@@ -46,45 +46,60 @@ const broadcast = async (tx) => {
     console.log(e);
   }
 };
-
 const publishOpReturn = async (mimetype, data, signature, hash) => {
-  const utxos = await getUtxos();
-  const tx = new bsv.Transaction().from(utxos);
-  const opArray = [
-    "17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x",
-    data,
-    mimetype,
-    signature,
-    hash,
-  ];
-
-  const opReturnArray = opArray.map((item) => {
-    if (typeof item === "string") {
-      return Buffer.from(item);
-    } else {
-      return item;
+  try {
+    const utxos = await getUtxos();
+    if (utxos.length === 0) {
+      throw new Error("No UTXOs available");
     }
-  });
-  const opReturn = bsv.Script.buildSafeDataOut(opReturnArray);
-  tx.addOutput(
-    new bsv.Transaction.Output({
-      script: opReturn,
-      satoshis: 0,
-    })
-  );
-  const size = tx._estimateSize();
-  const fee = Math.ceil(size * 0.015);
-  const totalSats = utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0);
-  const change = totalSats - fee;
-  tx.addOutput(
-    new bsv.Transaction.Output({
-      script: bsv.Script.buildPublicKeyHashOut(address),
-      satoshis: change,
-    })
-  );
-  tx.sign(privateKey);
-  const txid = await broadcast(tx);
-  return txid;
+
+    const tx = new bsv.Transaction().from(utxos);
+
+    // Ensure data is in the correct format
+    const bufferArray = [
+      "17RtQzMm1fXK1foJGWLquGNum5HHfLGH1x",
+      data,
+      mimetype,
+      signature,
+      hash,
+    ].map((item) => (Buffer.isBuffer(item) ? item : Buffer.from(item)));
+
+    // Add OP_RETURN output
+    const opReturn = bsv.Script.buildSafeDataOut(bufferArray);
+    tx.addOutput(
+      new bsv.Transaction.Output({
+        script: opReturn,
+        satoshis: 0,
+      })
+    );
+
+    // Calculate transaction fee (consider increasing the fee rate if necessary)
+    const feePerKb = 0.015; // This is just an example rate
+    const estimatedSize = tx._estimateSize();
+    const fee = Math.ceil(estimatedSize * feePerKb);
+
+    // Calculate change
+    const totalSats = utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0);
+    const change = totalSats - fee;
+    if (change < 0) {
+      throw new Error("Insufficient funds for fee");
+    }
+
+    // Add change output
+    tx.addOutput(
+      new bsv.Transaction.Output({
+        script: bsv.Script.buildPublicKeyHashOut(address),
+        satoshis: change,
+      })
+    );
+
+    tx.sign(privateKey);
+    const txid = await broadcast(tx);
+    return txid;
+  } catch (e) {
+    console.error("Error in publishOpReturn:", e.message);
+    throw e; // Rethrow the error after logging
+  }
 };
 
 const hashData = (data) => {
@@ -132,30 +147,32 @@ app.post("/publish", async (req, res) => {
     res.send("error");
   }
 });
-
 // app.post to handle the file data publish to blockchain
 app.post("/publishFile", async (req, res) => {
   try {
     if (busy) {
-      res.send("busy");
+      res.status(503).send("Server busy, please try again later");
       return;
     }
     busy = true;
+
     const base64 = req.body.data;
     const mimeType = req.body.mimeType;
     const hash = req.body.hash;
     const sig = req.body.signature;
-    const address = req.body.address;
-    const publicKey = req.body.publicKey;
     const data = Buffer.from(base64, "base64");
+
+    // Use 'data' if the function expects a buffer
     const txid = await publishOpReturn(mimeType, data, hash, sig);
+
     busy = false;
     res.send(txid);
   } catch (e) {
-    console.log(e);
-    res.send("error");
+    console.error(e);
+    res.status(500).send("An error occurred while processing the request");
   }
 });
+
 // app.post to handle the data publish to blockchain
 app.post("/hash", (req, res) => {
   try {
