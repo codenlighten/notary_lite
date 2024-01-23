@@ -15,6 +15,9 @@ const fundingAddress = process.env.FUNDING_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
+
+const approvedPublicKeys = [];
+
 let busy = false;
 const getUtxos = async () => {
   const response = await fetch(
@@ -138,9 +141,80 @@ const verifyData = (data, sig, address) => {
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "register.html"));
+});
+
+app.post("/registerId", async (req, res) => {
+  try {
+    if (busy) {
+      res.send("busy");
+      return;
+    }
+    busy = true;
+    const data = req.body.data;
+    const encryptedData = req.body.encryptedData;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const birthdate = req.body.birthdate;
+    const country = req.body.country;
+    const password = req.body.password;
+    const hash = req.body.hash;
+    const signature = req.body.signature;
+    const address = req.body.address;
+    const publicKey = req.body.publicKey;
+    const txid = await publishOpReturn(
+      "text/plain",
+      data,
+      signature,
+      address,
+      hash
+    );
+    busy = false;
+    approvedPublicKeys.push(publicKey);
+    res.send(txid);
+  } catch (e) {
+    busy = false;
+    console.log(e);
+    res.send("error");
+  }
+});
+
+//login with password, signed data and public key
+app.post("/login", async (req, res) => {
+  try {
+    if (busy) {
+      res.send("busy");
+      return;
+    }
+    busy = true;
+    const data = req.body.data;
+    const signature = req.body.signature;
+    const address = req.body.address;
+    const publicKey = req.body.publicKey;
+    //check if public key is approved
+    if (!approvedPublicKeys.includes(publicKey)) {
+      res.send("not approved");
+      busy = false;
+      return;
+    }
+    //verify data
+    const result = verifyData(data, signature, address);
+    if (!result) {
+      res.send("not verified");
+      busy = false;
+      return;
+    }
+    //verify password
+    res.send("success");
+  } catch (e) {
+    busy = false;
+    console.log(e);
+    res.send("error");
+  }
+});
 
 // app.post to handle the data publish to blockchain
-
 app.post("/publish", async (req, res) => {
   try {
     if (busy) {

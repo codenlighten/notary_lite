@@ -137,7 +137,27 @@
       <!-- copyright 2024 NotaryHash and SmartLedger -->
       <p>&copy; 2024 NotaryHash and SmartLedger. All rights reserved.</p>
     </div>
+    <script src="encryption.js"></script>
     <script>
+      const encrypt = (myString, myPassword) => {
+        //crypto-js
+        const cryptoJS = window.CryptoJS;
+        // Encrypt
+        const ciphertext = cryptoJS.AES.encrypt(
+          myString,
+          myPassword
+        ).toString();
+        return ciphertext;
+      };
+      //
+      const decrypt = (myString, myPassword) => {
+        //crypto-js
+        const cryptoJS = window.CryptoJS;
+        // Decrypt
+        const bytes = cryptoJS.AES.decrypt(myString, myPassword);
+        const plaintext = bytes.toString(cryptoJS.enc.Utf8);
+        return plaintext;
+      };
       const Buffer = bsv.deps.Buffer;
       const hashData = (data) => {
         // Return the hash as a Buffer
