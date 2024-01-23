@@ -11,6 +11,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 const wif = process.env.FUNDING_WIF;
+const fundingAddress = process.env.FUNDING_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
@@ -100,7 +101,7 @@ const publishOpReturn = async (mimetype, data, signature, address, hash) => {
     // Add change output
     tx.addOutput(
       new bsv.Transaction.Output({
-        script: bsv.Script.buildPublicKeyHashOut(address),
+        script: bsv.Script.buildPublicKeyHashOut(fundingAddress),
         satoshis: change,
       })
     );
