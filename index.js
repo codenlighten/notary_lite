@@ -51,7 +51,7 @@ const publishOpReturn = async (mimetype, data, signature, address, hash) => {
   try {
     const utxos = await getUtxos();
     if (utxos.length === 0) {
-      throw new Error("No UTXOs available");
+      return new Error("No UTXOs available");
     }
 
     const tx = new bsv.Transaction().from(utxos);
@@ -190,17 +190,21 @@ app.post("/publishFile", async (req, res) => {
 
 // app.post to handle the data publish to blockchain
 app.post("/hash", async (req, res) => {
+  if (busy) {
+    res.send("busy");
+    return;
+  }
+  busy = true;
+  const data = req.body.data;
+  const sig = req.body.signature;
+  const address = req.body.address;
+  const hash = hashData(data);
   try {
-    if (busy) {
-      res.send("busy");
+    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
+    if (!txid) {
+      res.send("error");
       return;
     }
-    busy = true;
-    const data = req.body.data;
-    const sig = req.body.signature;
-    const address = req.body.address;
-    const hash = hashData(data);
-    const txid = await publishOpReturn("text/plain", data, sig, address, hash);
     busy = false;
     res.send(txid);
   } catch (e) {
