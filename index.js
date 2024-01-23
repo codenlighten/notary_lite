@@ -135,7 +135,9 @@ app.post("/hash", (req, res) => {
     }
     busy = true;
     const data = req.body.data;
+    const sig = req.body.signature;
     const hash = hashData(data);
+    const txid = publishOpReturn([data, "text/plain", hash.toString(), sig]);
     busy = false;
     res.send(hash.toString());
   } catch (e) {
