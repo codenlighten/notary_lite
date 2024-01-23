@@ -165,7 +165,7 @@ app.post("/registerId", async (req, res) => {
     const publicKey = req.body.publicKey;
     const txid = await publishOpReturn(
       "text/plain",
-      data,
+      encryptedData,
       signature,
       address,
       hash

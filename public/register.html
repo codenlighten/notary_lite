@@ -172,7 +172,7 @@
           const doubleHash = bsv.crypto.Hash.sha256(
             Buffer.from(passwordHash)
           ).toString("hex");
-          const data = `${firstName}${lastName}${birthdate}${country}${password}`;
+          const data = `${firstName}${lastName}${birthdate}${country}`;
 
           const encryptedData = encrypt(data, password);
           const hash = hashData(data);
