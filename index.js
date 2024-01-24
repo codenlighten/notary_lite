@@ -33,8 +33,8 @@ const fundingAddress = process.env.FUNDING_ADDRESS;
 const monitorinAddress = process.env.MONITORING_ADDRESS;
 const registeredAddress = process.env.REGISTERED_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
-const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
-const address = bsv.Address.fromPublicKey(publicKey);
+// const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
+// const address = bsv.Address.fromPublicKey(publicKey);
 
 const encryptedData = (data, password) => {
   const algorithm = "aes-256-cbc";
@@ -120,7 +120,7 @@ if (fs.existsSync("authorized.json")) {
 let busy = false;
 const getUtxos = async () => {
   const response = await fetch(
-    `https://api.whatsonchain.com/v1/bsv/main/address/${address.toString()}/unspent`
+    `https://api.whatsonchain.com/v1/bsv/main/address/${fundingAddress}/unspent`
   );
   const json = await response.json();
   console.log(json);
@@ -128,7 +128,7 @@ const getUtxos = async () => {
     return new bsv.Transaction.UnspentOutput({
       txid: utxo.tx_hash,
       vout: utxo.tx_pos,
-      script: bsv.Script.buildPublicKeyHashOut(address).toHex(),
+      script: bsv.Script.buildPublicKeyHashOut(fundingAddress).toHex(),
       satoshis: utxo.value,
     });
   });
@@ -305,7 +305,7 @@ app.post("/registerId", async (req, res) => {
       country,
       passwordHash,
       encryptedKeys,
-      address,
+      address: memberAddress,
       publicKey,
       data,
       txid,
@@ -323,7 +323,7 @@ app.post("/registerId", async (req, res) => {
       encryptedMember,
       encryptedKeys,
       txid,
-      address,
+      address: memberAddress,
       publicKey,
     };
 
