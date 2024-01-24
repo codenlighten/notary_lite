@@ -358,6 +358,7 @@ app.post("/otpVerify", async (req, res) => {
     const otpCode = req.body.otpCode;
     //check if otp exists
     const otpData = checkOTP(otpCode, email);
+    console.log(otpData);
     if (!otpData) {
       res.send({ message: "otp not found" });
       busy = false;
@@ -382,8 +383,9 @@ app.post("/otpVerify", async (req, res) => {
       }
       //verify data
       const result = verifyData(data, signature, address);
+      console.log(result);
       if (!result) {
-        res.send("not verified");
+        res.send({ message: "not verified" });
         busy = false;
         return;
       }
