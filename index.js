@@ -394,14 +394,16 @@ app.post("/login", async (req, res) => {
 app.post("/otpVerify", async (req, res) => {
   try {
     if (busy) {
+      console.log("busy");
       res.send("busy");
       return;
     }
     busy = true;
+    console.log(otpCodes);
     const otpCode = req.body.otpCode;
     //check if otp exists
     const otpData = checkOTP(otpCode);
-    console.log(otpData);
+
     if (!otpData) {
       res.send({ message: "otp not found" });
       busy = false;
@@ -421,6 +423,7 @@ app.post("/otpVerify", async (req, res) => {
     } else {
       const email = otpData.email;
       const member = await getMemberByEmailAddress(email);
+      console.log(member);
       if (!member) {
         res.send({ message: "email not found" });
         busy = false;
