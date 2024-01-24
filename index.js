@@ -77,34 +77,18 @@ const generateOTP = () => {
   console.log(otpCode);
   return otpCode;
 };
-const otpFile = fs.readFileSync("otp.json", "utf8");
-const otpJson = JSON.parse(otpFile);
-//store otp in json file
+let otpCodes = [];
 const storeOTP = (otpCode, email) => {
-  const data = {
-    email,
-    otpCode,
-    date: new Date(),
-  };
-  otpJson.push(data);
-  fs.writeFileSync("otp.json", JSON.stringify(otpJson, null, 2));
+  otpCodes.push({ otpCode, email, date: new Date() });
 };
-
-//get otp.json file and check array of otp for code plus data
 const checkOTP = (otpCode) => {
-  const data = otpJson.find((item) => {
-    return item.otpCode === otpCode;
-  });
-  return data;
+  const otpData = otpCodes.find((otp) => otp.otpCode === otpCode);
+  return otpData;
 };
-
-//remove otp from json file
 const removeOTP = (otpCode, email) => {
-  const index = otpJson.findIndex((item) => {
-    return item.email === email && item.otpCode === otpCode;
-  });
-  otpJson.splice(index, 1);
-  fs.writeFileSync("otp.json", JSON.stringify(otpJson, null, 2));
+  otpCodes = otpCodes.filter(
+    (otp) => otp.otpCode !== otpCode && otp.email !== email
+  );
 };
 
 let busy = false;
