@@ -75,12 +75,42 @@
     .forms {
       display: none;
     }
+    #buttonChoices {
+      display: flex;
+      justify-content: center;
+    }
+    #buttonChoices button {
+      margin: 0 10px;
+    }
+    #message {
+      display: none;
+      background-color: #e9ecef;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    #message a {
+      color: #956134;
+    }
+    #message a:hover {
+      color: #77471c;
+    }
+    #message p {
+      margin: 0;
+    }
+
     @media (max-width: 600px) {
       .mainContainer {
         padding: 10px;
       }
       #logo {
         width: 100px;
+      }
+      #buttonChoices {
+        flex-direction: column;
+      }
+      #buttonChoices button {
+        margin: 10px 0;
       }
     }
   </style>
