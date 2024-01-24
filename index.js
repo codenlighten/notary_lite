@@ -27,6 +27,7 @@ const jwt = require("jsonwebtoken");
 //otp-generator
 const otp = require("otp-generator");
 const { send2FACode } = require("./nodemail");
+const cryptoPassword = process.env.PASSWORD;
 const wif = process.env.FUNDING_WIF;
 const fundingAddress = process.env.FUNDING_ADDRESS;
 const monitorinAddress = process.env.MONITORING_ADDRESS;
@@ -306,7 +307,6 @@ app.post("/registerId", async (req, res) => {
       data,
       txid,
     };
-    const encrypted = encryptedData(encryptedData, passwordHash);
     const uuid = generateUUID();
     const newMemberObject = {
       uuid,
@@ -317,6 +317,8 @@ app.post("/registerId", async (req, res) => {
       address,
       publicKey,
     };
+    const encrypted = encryptedData(member, cryptoPassword);
+
     addMember(newMemberObject);
     busy = false;
     approvedPublicKeys.push(publicKey);
@@ -493,7 +495,7 @@ app.post("/otpVerify", async (req, res) => {
       };
       addTransaction(transactionObject);
       const token = generateToken({ email });
-      const decrypted = decryptedData(member.encrypted, member.passwordHash);
+      const decrypted = decryptedData(member.encrypted, cryptoPassword);
       res.send({
         token,
         message: "success",
