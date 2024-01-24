@@ -91,9 +91,9 @@ const storeOTP = (otpCode, email) => {
 };
 
 //get otp.json file and check array of otp for code plus data
-const checkOTP = (otpCode, email) => {
+const checkOTP = (otpCode) => {
   const data = otpJson.find((item) => {
-    return item.email === email && item.otpCode === otpCode;
+    return item.otpCode === otpCode;
   });
   return data;
 };
@@ -377,14 +377,6 @@ app.post("/login", async (req, res) => {
       busy = false;
       return;
     }
-    //verify data
-    // const result = verifyData(data, signature, address);
-    // if (!result) {
-    //   res.send({ message: "not verified" });
-    //   busy = false;
-    //   return;
-    // }
-    //op return
     const hash = hashData(email);
     const signature = signData(email, wif);
     const address = member.address;
@@ -437,13 +429,14 @@ app.post("/otpVerify", async (req, res) => {
     // const email = req.body.email;
     const otpCode = req.body.otpCode;
     //check if otp exists
-    const otpData = checkOTP(otpCode, email);
+    const otpData = checkOTP(otpCode);
     console.log(otpData);
     if (!otpData) {
       res.send({ message: "otp not found" });
       busy = false;
       return;
     }
+
     const date = new Date(otpData.date);
     const now = new Date();
     const diff = now - date;
