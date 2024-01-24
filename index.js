@@ -147,7 +147,8 @@ const publishOpReturn = async (
   address,
   hash,
   monitor,
-  type = "publish"
+  type = "publish",
+  encryptedData = "NA"
 ) => {
   try {
     const utxos = await getUtxos();
@@ -175,6 +176,8 @@ const publishOpReturn = async (
       signature,
       "hash",
       hash,
+      "encryptedData",
+      encryptedData,
     ].map((item) => (Buffer.isBuffer(item) ? item : Buffer.from(item)));
 
     // Add OP_RETURN output
@@ -278,13 +281,13 @@ app.post("/registerId", async (req, res) => {
     const publicKey = req.body.publicKey;
     const txid = await publishOpReturn(
       "text/plain",
-      encryptedMemberData,
       encryptedKeys,
       signature,
       memberAddress,
       hash,
       registeredAddress,
-      "register"
+      "register",
+      encryptedMemberData
     );
     //add member to mongodb
     const member = {
