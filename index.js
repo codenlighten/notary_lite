@@ -452,6 +452,7 @@ app.post("/otpVerify", async (req, res) => {
       addTransaction(transactionObject);
       const token = generateToken({ email });
       const decrypted = decryptedData(member.encryptedMember, cryptoPassword);
+      console.log(decrypted);
       //remove otp
       busy = false;
       removeOTP(otpCode, email);
