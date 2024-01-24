@@ -393,7 +393,7 @@
             } else if (registerStatus == "verifyOTP") {
               localStorage.setItem("verifiedOTP", true);
               localStorage.setItem("token", json.token);
-              //redirect to dashboard /
+              localStorage.setItem("date", json.date);
               location.href = "/dashboard";
             }
           })

@@ -3,6 +3,8 @@ const bsv = require("bsv");
 const fetch = require("node-fetch");
 const express = require("express");
 const { generateKeys } = require("./keys");
+//encryption crypto module
+const crypto = require("crypto");
 const app = express();
 const port = process.env.PORT || 3000;
 const path = require("path");
@@ -10,7 +12,16 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 const fs = require("fs");
-//uuid
+const {
+  addMember,
+  getMemberByEmailAddress,
+  getMembers,
+  addReferral,
+  updateReferral,
+  getReferrals,
+  addTransaction,
+  getTransactions,
+} = require("./mongo");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 //otp-generator
@@ -23,6 +34,25 @@ const registeredAddress = process.env.REGISTERED_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
+
+const encryptedData = (data, password) => {
+  const algorithm = "aes-256-cbc";
+  const key = crypto.scryptSync(password, "salt", 32);
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(data, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
+};
+const decryptedData = (encryptedData, password) => {
+  const algorithm = "aes-256-cbc";
+  const key = crypto.scryptSync(password, "salt", 32);
+  const iv = crypto.randomBytes(16);
+  const decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decrypted = decipher.update(encryptedData, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
+};
 
 // jwt token function
 const generateToken = (data) => {
@@ -262,6 +292,31 @@ app.post("/registerId", async (req, res) => {
       registeredAddress,
       "register"
     );
+    //add member to mongodb
+    const member = {
+      firstName,
+      lastName,
+      email,
+      birthdate,
+      country,
+      passwordHash,
+      address,
+      publicKey,
+      data,
+      txid,
+    };
+    const encrypted = encryptedData(encryptedData, passwordHash);
+    const uuid = generateUUID();
+    const newMemberObject = {
+      uuid,
+      passwordHash,
+      email,
+      encrypted,
+      txid,
+      address,
+      publicKey,
+    };
+    addMember(newMemberObject);
     busy = false;
     approvedPublicKeys.push(publicKey);
     fs.writeFileSync(
@@ -295,27 +350,39 @@ app.post("/login", async (req, res) => {
       return;
     }
     busy = true;
-    const data = req.body.data;
-    const signature = req.body.signature;
-    const address = req.body.address;
-    const publicKey = req.body.publicKey;
+    const passwordHash = req.body.passwordHash;
     const email = req.body.email;
-
-    //check if public key is approved
-    if (!approvedPublicKeys.includes(publicKey)) {
-      res.send({ message: "not approved" });
+    if (!passwordHash || !email) {
+      res.send({ message: "missing data" });
+      busy = false;
+      return;
+    }
+    //check registered member
+    const member = await getMemberByEmailAddress(email);
+    if (!member) {
+      res.send({ message: "email not found" });
+      busy = false;
+      return;
+    }
+    //check passwordHash
+    if (member.passwordHash !== passwordHash) {
+      res.send({ message: "password incorrect" });
       busy = false;
       return;
     }
     //verify data
-    const result = verifyData(data, signature, address);
-    if (!result) {
-      res.send({ message: "not verified" });
-      busy = false;
-      return;
-    }
+    // const result = verifyData(data, signature, address);
+    // if (!result) {
+    //   res.send({ message: "not verified" });
+    //   busy = false;
+    //   return;
+    // }
     //op return
-    const hash = hashData(data);
+    const hash = hashData(email);
+    const signature = signData(email, wif);
+    const address = member.address;
+    const data = email;
+
     const txid = await publishOpReturn(
       "text/plain",
       data,
@@ -350,11 +417,11 @@ app.post("/otpVerify", async (req, res) => {
       return;
     }
     busy = true;
-    const data = req.body.data;
-    const signature = req.body.signature;
-    const address = req.body.address;
-    const publicKey = req.body.publicKey;
-    const email = req.body.email;
+    // const data = req.body.data;
+    // const signature = req.body.signature;
+    // const address = req.body.address;
+    // const publicKey = req.body.publicKey;
+    // const email = req.body.email;
     const otpCode = req.body.otpCode;
     //check if otp exists
     const otpData = checkOTP(otpCode, email);
@@ -376,22 +443,26 @@ app.post("/otpVerify", async (req, res) => {
       return;
     } else {
       //check if public key is approved
-      if (!approvedPublicKeys.includes(publicKey)) {
-        res.send({ message: "not approved" });
-        busy = false;
-        return;
-      }
+      // if (!approvedPublicKeys.includes(publicKey)) {
+      //   res.send({ message: "not approved" });
+      //   busy = false;
+      //   return;
+      // }
       //verify data
-      const result = verifyData(data, signature, address);
-      console.log(result);
-      if (!result) {
-        res.send({ message: "not verified" });
-        busy = false;
-        return;
-      }
+      // const result = verifyData(data, signature, address);
+      // console.log(result);
+      // if (!result) {
+      //   res.send({ message: "not verified" });
+      //   busy = false;
+      //   return;
+      // }
       //jwt token
       //op return
-      const hash = hashData(data);
+      const hash = hashData(otpCode);
+      const signature = signData(otpCode, wif);
+      const address = fundingAddress; //change to signer address
+      const data = otpCode;
+
       const txid = await publishOpReturn(
         "text/plain",
         data,
@@ -402,7 +473,7 @@ app.post("/otpVerify", async (req, res) => {
         "otpVerify"
       );
       const token = generateToken({ email });
-      res.send({ token, message: "success", txid });
+      res.send({ token, message: "success", txid, date: new Date() });
       //remove otp
       busy = false;
       removeOTP(otpCode, email);
