@@ -413,6 +413,7 @@ app.post("/otpVerify", async (req, res) => {
     const date = new Date(otpData.date);
     const now = new Date();
     const diff = now - date;
+    console.log(diff);
     //check if otp is expired 5 minutes
     if (diff > 300000) {
       res.send({ message: "otp expired" });
@@ -429,10 +430,10 @@ app.post("/otpVerify", async (req, res) => {
         busy = false;
         return;
       }
-      const hash = hashData(member.email);
-      const signature = signData(member.email, wif);
+      const hash = hashData(email);
+      const signature = signData(email, wif);
       const address = member.address; //change to signer address
-      const data = member.email;
+      const data = email;
 
       const txid = await publishOpReturn(
         "text/plain",
@@ -451,6 +452,9 @@ app.post("/otpVerify", async (req, res) => {
       addTransaction(transactionObject);
       const token = generateToken({ email });
       const decrypted = decryptedData(member.encryptedMember, cryptoPassword);
+      //remove otp
+      busy = false;
+      removeOTP(otpCode, email);
       res.send({
         token,
         message: "success",
@@ -458,9 +462,6 @@ app.post("/otpVerify", async (req, res) => {
         date: new Date(),
         member: decrypted,
       });
-      //remove otp
-      busy = false;
-      removeOTP(otpCode, email);
     }
   } catch (e) {
     busy = false;
