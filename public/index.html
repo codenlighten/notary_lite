@@ -348,7 +348,7 @@
           const hash = hashData(identity.data);
           const signature = signData(identity.data);
           sendData(
-            "/verifyOTP",
+            "/otpVerify",
             {
               otp: otp,
               hash: hash.toString("hex"),
