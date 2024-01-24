@@ -44,6 +44,7 @@ const encryptedData = (data, password) => {
   encrypted += cipher.final("hex");
   return encrypted;
 };
+console.log(encryptedData("test", "test"));
 const decryptedData = (encryptedData, password) => {
   const algorithm = "aes-256-cbc";
   const key = crypto.scryptSync(password, "salt", 32);
