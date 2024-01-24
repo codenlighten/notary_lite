@@ -96,6 +96,9 @@
         agriculture, supply chain, evidence controls, pharmaceutical research,
         and more.
       </p>
+      <p class="result" id="resultTxid"></p>
+      <p class="result" id="message"></p>
+
       <div class="forms" id="registration">
         <h2>Register ID</h2>
         <form id="publishForm">
@@ -110,7 +113,6 @@
           <button type="submit">Register</button>
         </form>
         <p class="result" id="publishResult"></p>
-        <p class="result" id="message"></p>
       </div>
       <div class="forms" id="verification">
         <h2>Verify OTP Code</h2>
@@ -296,7 +298,7 @@
             },
             "publishResult",
             true,
-            true
+            "register"
           );
         });
 
@@ -329,7 +331,8 @@
               address: localStorage.getItem("address"),
             },
             "verifyResult",
-            false
+            true,
+            "login"
           );
         });
 
@@ -355,7 +358,8 @@
               address: localStorage.getItem("address"),
             },
             "verifyOTPResult",
-            false
+            false,
+            "verifyOTP"
           );
         });
       function sendData(url, data, resultElementId, txStatus, registerStatus) {
@@ -371,15 +375,28 @@
             const json = JSON.parse(data);
             const txid = json.txid;
             const message = json.message;
-            document.getElementById(resultElementId).innerHTML = txStatus
+            document.getElementById(resultTxid).innerHTML = txStatus
               ? `<a href="https://whatsonchain.com/tx/${txid}" target="_blank">${txid}</a>`
               : data;
             document.getElementById("message").innerHTML = message;
             document.getElementById("message").style.display = "block";
             document.getElementById(resultElementId).style.display = "block";
             document.getElementById("verification").style.display = "block";
-            if (registerStatus) {
+            if (registerStatus == "register") {
               localStorage.setItem("registered", true);
+              document.getElementById("login").style.display = "none";
+              document.getElementById("registration").style.display = "none";
+              document.getElementById("verification").style.display = "block";
+            } else if (registerStatus == "login") {
+              localStorage.setItem("loggedIn", true);
+              document.getElementById("login").style.display = "none";
+              document.getElementById("registration").style.display = "none";
+              document.getElementById("verification").style.display = "block";
+            } else if (registerStatus == "verifyOTP") {
+              localStorage.setItem("verifiedOTP", true);
+              localStorage.setItem("token", json.token);
+              //redirect to dashboard /
+              location.href = "/dashboard";
             }
           })
           .catch((error) => {

@@ -271,6 +271,7 @@ app.post("/registerId", async (req, res) => {
     //otp
     const otpCode = generateOTP();
     //send email
+    storeOTP(otpCode, email);
     send2FACode(email, otpCode);
     res.send({
       txid,
@@ -327,6 +328,7 @@ app.post("/login", async (req, res) => {
     //generate token
     //otp
     const otpCode = generateOTP();
+    storeOTP(otpCode, email);
     //send email
     send2FACode(email, otpCode);
     busy = false;
