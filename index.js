@@ -264,7 +264,7 @@ app.post("/registerId", async (req, res) => {
     }
     busy = true;
     let data = req.body.data;
-    const encryptedData = req.body.encryptedData;
+    const encryptedMemberData = req.body.encryptedData;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     const email = req.body.email;
@@ -287,7 +287,7 @@ app.post("/registerId", async (req, res) => {
     const publicKey = req.body.publicKey;
     const txid = await publishOpReturn(
       "text/plain",
-      encryptedData,
+      encryptedMemberData,
       signature,
       address,
       hash,
@@ -307,17 +307,18 @@ app.post("/registerId", async (req, res) => {
       data,
       txid,
     };
+    const encryptedMember = encryptedData(member, cryptoPassword);
+
     const uuid = generateUUID();
     const newMemberObject = {
       uuid,
       passwordHash,
       email,
-      encrypted,
+      encryptedMember,
       txid,
       address,
       publicKey,
     };
-    const encrypted = encryptedData(member, cryptoPassword);
 
     addMember(newMemberObject);
     busy = false;
@@ -495,7 +496,7 @@ app.post("/otpVerify", async (req, res) => {
       };
       addTransaction(transactionObject);
       const token = generateToken({ email });
-      const decrypted = decryptedData(member.encrypted, cryptoPassword);
+      const decrypted = decryptedData(member.encryptedMember, cryptoPassword);
       res.send({
         token,
         message: "success",
