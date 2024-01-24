@@ -307,7 +307,10 @@ app.post("/registerId", async (req, res) => {
       data,
       txid,
     };
-    const encryptedMember = encryptedData(member, cryptoPassword);
+    const encryptedMember = encryptedData(
+      JSON.stringify(member),
+      cryptoPassword
+    );
 
     const uuid = generateUUID();
     const newMemberObject = {
@@ -452,22 +455,6 @@ app.post("/otpVerify", async (req, res) => {
       removeOTP(otpCode, email);
       return;
     } else {
-      //check if public key is approved
-      // if (!approvedPublicKeys.includes(publicKey)) {
-      //   res.send({ message: "not approved" });
-      //   busy = false;
-      //   return;
-      // }
-      //verify data
-      // const result = verifyData(data, signature, address);
-      // console.log(result);
-      // if (!result) {
-      //   res.send({ message: "not verified" });
-      //   busy = false;
-      //   return;
-      // }
-      //jwt token
-      //op return
       const email = otpData.email;
       const member = await getMemberByEmailAddress(email);
       if (!member) {
