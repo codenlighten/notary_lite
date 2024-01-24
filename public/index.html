@@ -375,7 +375,7 @@
             const json = JSON.parse(data);
             const txid = json.txid;
             const message = json.message;
-            document.getElementById(resultTxid).innerHTML = txStatus
+            document.getElementById("resultTxid").innerHTML = txStatus
               ? `<a href="https://whatsonchain.com/tx/${txid}" target="_blank">${txid}</a>`
               : data;
             document.getElementById("message").innerHTML = message;
