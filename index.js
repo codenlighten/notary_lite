@@ -107,16 +107,6 @@ const removeOTP = (otpCode, email) => {
   fs.writeFileSync("otp.json", JSON.stringify(otpJson, null, 2));
 };
 
-const approvedPublicKeys = [];
-//check if file exists authorized.json
-if (fs.existsSync("authorized.json")) {
-  const data = fs.readFileSync("authorized.json", "utf8");
-  const json = JSON.parse(data);
-  json.forEach((item) => {
-    approvedPublicKeys.push(item);
-  });
-}
-
 let busy = false;
 const getUtxos = async () => {
   const response = await fetch(
@@ -329,12 +319,7 @@ app.post("/registerId", async (req, res) => {
 
     addMember(newMemberObject);
     busy = false;
-    approvedPublicKeys.push(publicKey);
-    fs.writeFileSync(
-      "authorized.json",
-      JSON.stringify(approvedPublicKeys, null, 2)
-    );
-    //otp
+
     const otpCode = generateOTP();
     //send email
     storeOTP(otpCode, email);
@@ -426,11 +411,6 @@ app.post("/otpVerify", async (req, res) => {
       return;
     }
     busy = true;
-    // const data = req.body.data;
-    // const signature = req.body.signature;
-    // const address = req.body.address;
-    // const publicKey = req.body.publicKey;
-    // const email = req.body.email;
     const otpCode = req.body.otpCode;
     //check if otp exists
     const otpData = checkOTP(otpCode);
