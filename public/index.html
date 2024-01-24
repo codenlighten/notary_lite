@@ -346,7 +346,7 @@
           //email
           const otp = document.getElementsByName("data")[0].value;
           const hash = hashData(identity.data);
-          const signature = signData(data);
+          const signature = signData(identity.data);
           sendData(
             "/verifyOTP",
             {
