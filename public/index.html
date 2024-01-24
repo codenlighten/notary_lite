@@ -114,10 +114,11 @@
       </div>
       <div class="forms" id="verification">
         <h2>Verify OTP Code</h2>
-        <form id="verifyForm">
+        <form id="verifyOTPForm">
           <input type="text" name="data" placeholder="OTP Code" />
           <button type="submit">Verify</button>
         </form>
+        <p class="result" id="verifyOTPResult"></p>
       </div>
       <div class="forms" id="login">
         <h2>Login</h2>
@@ -375,6 +376,32 @@
               address: localStorage.getItem("address"),
             },
             "verifyResult",
+            false
+          );
+        });
+
+      // verify OTP
+      document
+        .getElementById("verifyOTPForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const identity = JSON.parse(localStorage.getItem("identity"));
+          const address = localStorage.getItem("address");
+          //email
+          const otp = document.getElementsByName("data")[0].value;
+          const hash = hashData(identity.data);
+          const signature = signData(data);
+          sendData(
+            "/verifyOTP",
+            {
+              otp: otp,
+              hash: hash.toString("hex"),
+              signature: signature,
+              email: identity.email,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            },
+            "verifyOTPResult",
             false
           );
         });
