@@ -453,15 +453,6 @@
         console.log(txId);
       };
 
-      if (localStorage.getItem("registered")) {
-        document.getElementById("registration").style.display = "none";
-        document.getElementById("verification").style.display = "none";
-        document.getElementById("login").style.display = "block";
-      } else {
-        document.getElementById("registration").style.display = "block";
-        document.getElementById("verification").style.display = "none";
-        document.getElementById("login").style.display = "none";
-      }
       //clear all inputs
       const clearInputs = () => {
         const inputs = document.getElementsByTagName("input");
