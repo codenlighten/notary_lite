@@ -46,12 +46,12 @@ const encryptedData = (data, password) => {
   return encrypted;
 };
 console.log(encryptedData("test", "test"));
-const decryptedData = (encryptedData, password) => {
+const decryptedData = (data, password) => {
   const algorithm = "aes-256-cbc";
   const key = crypto.scryptSync(password, "salt", 32);
   const iv = crypto.randomBytes(16);
   const decipher = crypto.createDecipheriv(algorithm, key, iv);
-  let decrypted = decipher.update(encryptedData, "hex", "utf8");
+  let decrypted = decipher.update(data, "hex", "utf8");
   decrypted += decipher.final("utf8");
   return decrypted;
 };
