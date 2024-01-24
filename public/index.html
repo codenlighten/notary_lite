@@ -3,21 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- meta -->
-    <meta
-      name="description"
-      content="Notary Hash is a simple web app that allows you to publish data to the blockchain. It uses the Bitcoin SV blockchain."
-    />
-    <meta
-      name="keywords"
-      content="Notary Hash, Notary, Hash, Bitcoin, Blockchain, Bitcoin SV, BSV, Publish, Data, Publish Data, Publish PDF, PDF, Publish PDF File, Publish File, File, Publish File, Hash Data, Hash, Sign Data, Sign, Verify Data, Verify, Verify Signature, Verify Hash, Verify Data, Verify Data on Blockchain, Verify Data on Bitcoin SV, Verify Data on BSV, Verify Data on Bitcoin, Verify Data on BTC, Verify Data on Bitcoin Cash, Verify Data on BCH, Verify Data on Bitcoin ABC, Verify Data on Bitcoin ABC, Verify Data on Bitcoin Cash ABC, Verify Data on BCHA, Verify Data on Bitcoin Cash Node, Verify Data on BCHN, Verify Data on Bitcoin Cash SV, Verify Data on BCSV, Verify Data on Bitcoin Cash Satoshi Vision, Verify Data on BSV, Verify Data on Bitcoin Satoshi Vision, Verify Data on Bitcoin SV"
-    />
-    <meta name="author" content="Notary Hash and SmartLedger" />
-    <meta name="robots" content="index, follow" />
-    <meta name="googlebot" content="index, follow" />
-    <meta name="google" content="notranslate" />
-    <title>Notary Hash</title>
+    <title>Registration</title>
     <script src="https://unpkg.com/bsv@1.5"></script>
     <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-message.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-mnemonic.min.js"></script>
@@ -38,7 +24,6 @@
       padding: 20px;
       background: white;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      word-wrap: break-word;
     }
     h1,
     h2 {
@@ -64,7 +49,15 @@
       border-radius: 5px;
       border: 1px solid #ddd;
     }
-
+    button {
+      background-color: #956134; /* Primary color for buttons */
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #77471c; /* Slightly darker shade for hover effect */
+    }
     p {
       background-color: #e9ecef;
       padding: 10px;
@@ -74,30 +67,14 @@
       word-break: break-all;
       display: none;
     }
-    #keys {
-      background-color: #e9ecef;
-      padding: 10px;
-      border-radius: 5px;
-      word-wrap: break-word;
-    }
-    #keys p {
-      margin: 0;
-    }
     #logo {
       display: block;
       margin: 0 auto;
       width: 200px;
     }
-    button {
-      background-color: #956134; /* Primary color for buttons */
-      color: white;
-      border: none;
-      cursor: pointer;
+    .forms {
+      display: none;
     }
-    button:hover {
-      background-color: #77471c; /* Primary color for buttons */
-    }
-
     @media (max-width: 600px) {
       .mainContainer {
         padding: 10px;
@@ -109,63 +86,46 @@
   </style>
   <body>
     <div class="mainContainer">
-      <img src="logo.png" alt="notaryhash" id="logo" />
+      <img src="logo.png" alt="NotaryHash Logo" id="logo" />
       <h1>NotaryHash</h1>
-      <div id="keys">
-        <h2>Keys</h2>
-        <p>
-          <strong>Public Key:</strong>
-          <span id="publicKey"></span>
-        </p>
-        <p>
-          <strong>Address:</strong>
-          <span id="address"></span>
-        </p>
-        <p>
-          <strong>Verified:</strong>
-          <span id="verified"></span>
-        </p>
+      <p>
+        Notary Hash allows you to interact with the blockchain to publish data,
+        hash data, sign data, and verify it in the future. It uses scalable
+        blockchain technology to provide a secure and immutable notarizations.
+        Industry use cases include: notarization, timestamping, precision
+        agriculture, supply chain, and more.
+      </p>
+      <div class="forms" id="registration">
+        <h2>Register ID</h2>
+        <form id="publishForm">
+          <input type="text" name="data" placeholder="First Name" />
+          <input type="text" name="data" placeholder="Last Name" />
+          <input type="date" name="data" placeholder="Birthdate" />
+          <input type="text" name="data" placeholder="Country" />
+          <!-- email -->
+          <input placeholder="email address" type="email" id="emailRegister" />
+          <input type="password" name="data" placeholder="Password" />
+          <input type="password" name="data" placeholder="Repeat Password" />
+          <button type="submit">Register</button>
+        </form>
+        <p class="result" id="publishResult"></p>
+        <p class="result" id="message"></p>
       </div>
-      <h2>Publish Data</h2>
-      <form id="publishForm">
-        <input type="text" name="data" placeholder="Enter data to publish" />
-        <button type="submit">Publish</button>
-      </form>
-      <p class="result" id="publishResult"></p>
-
-      <!-- publish pdf file -->
-      <h2>Publish PDF File</h2>
-      <form id="publishFileForm">
-        <input type="file" name="file" placeholder="Enter data to publish" />
-        <button type="submit">Publish</button>
-      </form>
-      <p class="result" id="publishFileResult"></p>
-
-      <!-- Form for Hashing Data -->
-      <h2>Hash Data</h2>
-      <form id="hashForm">
-        <input type="text" name="data" placeholder="Enter data to hash" />
-        <button type="submit">Hash</button>
-      </form>
-      <p class="result" id="hashResult"></p>
-
-      <!-- Form for Signing Data -->
-      <h2>Sign Data</h2>
-      <form id="signForm">
-        <input type="text" name="data" placeholder="Enter data to sign" />
-        <button type="submit">Sign</button>
-      </form>
-      <p class="result" id="signResult"></p>
-
-      <!-- Form for Verifying Data -->
-      <h2>Verify Data</h2>
-      <form id="verifyForm">
-        <input type="text" name="data" placeholder="Enter data" />
-        <input type="text" name="sig" placeholder="Enter signature" />
-        <input type="text" name="address" placeholder="Enter address" />
-        <button type="submit">Verify</button>
-      </form>
-      <p class="result" id="verifyResult"></p>
+      <div class="forms" id="verification">
+        <h2>Verify OTP Code</h2>
+        <form id="verifyForm">
+          <input type="text" name="data" placeholder="OTP Code" />
+          <button type="submit">Verify</button>
+        </form>
+      </div>
+      <div class="forms" id="login">
+        <h2>Login</h2>
+        <form id="verifyForm">
+          <input type="password" name="data" placeholder="Password" />
+          <button type="submit">Login</button>
+        </form>
+        <p class="result" id="verifyResult"></p>
+      </div>
       <!-- copyright 2024 NotaryHash and SmartLedger -->
       <p>&copy; 2024 NotaryHash and SmartLedger. All rights reserved.</p>
     </div>
@@ -253,129 +213,93 @@
         localStorage.setItem("mnemonic", mnemonic);
         localStorage.setItem("path", path);
       }
-      document.getElementById("publicKey").innerHTML =
-        localStorage.getItem("publicKey");
-      document.getElementById("address").innerHTML =
-        localStorage.getItem("address");
-      if (localStorage.getItem("registered") === "true") {
-        document.getElementById("verified").innerHTML = "Yes";
-      } else {
-        document.getElementById(
-          "verified"
-        ).innerHTML = `No. Please visit <a href="https://notaryhash.com/register" target="_blank">Notary Hash Register Page</a> to register your address.`;
-      }
-
       document
         .getElementById("publishForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const hash = hashData(this.data.value);
-          const signature = signData(this.data.value);
-          console.log(hash.toString("hex"));
-          console.log(signature);
+          const firstName = document.getElementsByName("data")[0].value;
+          const lastName = document.getElementsByName("data")[1].value;
+          const birthdate = document.getElementsByName("data")[2].value;
+          const country = document.getElementsByName("data")[3].value;
+          const email = document.getElementById("emailRegister").value;
+          const password = document.getElementsByName("data")[4].value;
+          const repeatPassword = document.getElementsByName("data")[5].value;
+          console.log(
+            firstName,
+            lastName,
+            birthdate,
+            country,
+            email,
+            password,
+            repeatPassword
+          );
+          if (password !== repeatPassword) {
+            alert("Passwords do not match");
+            return;
+          }
+          if (
+            !firstName ||
+            !lastName ||
+            !birthdate ||
+            !country ||
+            !password ||
+            !repeatPassword ||
+            !email
+          ) {
+            alert("Please fill in all fields");
+            return;
+          }
+          const passwordHash = bsv.crypto.Hash.sha256(
+            Buffer.from(password)
+          ).toString("hex");
+
+          const doubleHash = bsv.crypto.Hash.sha256(
+            Buffer.from(passwordHash)
+          ).toString("hex");
+          const data = `${firstName}${lastName}${birthdate}${country}`;
+
+          const encryptedData = encrypt(data.toLowerCase(), password);
+          const hash = hashData(data.toLowerCase());
+          const signature = signData(data.toLowerCase());
+          localStorage.setItem(
+            "identity",
+            JSON.stringify({
+              data: data.toLowerCase(),
+              encryptedData: encryptedData,
+              firstName: firstName.toLowerCase(),
+              lastName: lastName.toLowerCase(),
+              birthdate: birthdate,
+              country: country.toLowerCase(),
+              email: email.toLowerCase(),
+              password: doubleHash,
+              hash: hash.toString("hex"),
+              signature: signature,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            })
+          );
           sendData(
-            "/publish",
+            "/registerId",
             {
-              data: this.data.value,
+              data: data,
+              encryptedData: encryptedData,
+              firstName: firstName,
+              lastName: lastName,
+              birthdate: birthdate,
+              country: country,
+              email: email,
+              password: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
             },
             "publishResult",
+            true,
             true
           );
         });
-
-      document
-        .getElementById("hashForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const hash = hashData(this.data.value);
-          const signature = signData(this.data.value);
-          console.log(hash.toString("hex"));
-          console.log(signature);
-          sendData(
-            "/hash",
-            {
-              data: this.data.value,
-              hash: hash.toString("hex"),
-              signature: signature,
-              publicKey: localStorage.getItem("publicKey"),
-              address: localStorage.getItem("address"),
-            },
-            "hashResult",
-            true
-          );
-        });
-
-      document
-        .getElementById("signForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const hash = hashData(this.data.value);
-          const signature = signData(this.data.value);
-          console.log(hash.toString("hex"));
-          console.log(signature);
-          sendData(
-            "/sign",
-            {
-              data: this.data.value,
-              hash: hash.toString("hex"),
-              signature: signature,
-              publicKey: localStorage.getItem("publicKey"),
-              address: localStorage.getItem("address"),
-            },
-            "signResult",
-            true
-          );
-        });
-
-      document
-        .getElementById("verifyForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          sendData(
-            "/verify",
-            {
-              data: this.data.value,
-              sig: this.sig.value,
-              address: this.address.value,
-            },
-            "verifyResult"
-          );
-        });
-
-      document
-        .getElementById("publishFileForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const file = this.file.files[0];
-          const mimeType = file.type;
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => {
-            const hash = hashData(reader.result);
-            const signature = signData(reader.result);
-            console.log(hash.toString("hex"));
-            console.log(signature);
-            sendData(
-              "/publishFile",
-              {
-                data: reader.result.split(",")[1], // remove "data:application/pdf;base64," from the data url [1
-                mimeType: mimeType,
-                hash: hash.toString("hex"),
-                signature: signature,
-                publicKey: localStorage.getItem("publicKey"),
-                address: localStorage.getItem("address"),
-              },
-              "publishFileResult",
-              true
-            );
-          };
-        });
-
-      function sendData(url, data, resultElementId, txStatus) {
+      function sendData(url, data, resultElementId, txStatus, registerStatus) {
         fetch(url, {
           method: "POST",
           headers: {
@@ -385,10 +309,18 @@
         })
           .then((response) => response.text())
           .then((data) => {
+            const json = JSON.parse(data);
+            const txid = json.txid;
+            const message = json.message;
             document.getElementById(resultElementId).innerHTML = txStatus
-              ? `<a href="https://whatsonchain.com/tx/${data}" target="_blank">${data}</a>`
+              ? `<a href="https://whatsonchain.com/tx/${txid}" target="_blank">${txid}</a>`
               : data;
+            document.getElementById("message").innerHTML = message;
+            document.getElementById("message").style.display = "block";
             document.getElementById(resultElementId).style.display = "block";
+            if (registerStatus) {
+              localStorage.setItem("registered", true);
+            }
           })
           .catch((error) => {
             console.error("Error:", error);
@@ -410,6 +342,37 @@
             });
           });
       };
+
+      // login
+      document
+        .getElementById("verifyForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const identity = JSON.parse(localStorage.getItem("identity"));
+          const address = localStorage.getItem("address");
+          const password = document.getElementsByName("data")[10].value;
+          const passwordHash = bsv.crypto.Hash.sha256(
+            Buffer.from(password)
+          ).toString("hex");
+          const doubleHash = bsv.crypto.Hash.sha256(
+            Buffer.from(passwordHash)
+          ).toString("hex");
+          const hash = hashData(identity.data);
+          const signature = signData(data);
+          sendData(
+            "/verifyID",
+            {
+              password: doubleHash,
+              hash: hash.toString("hex"),
+              signature: signature,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            },
+            "verifyResult",
+            false
+          );
+        });
+
       const broadcastTx = (tx) => {
         return fetch("https://api.whatsonchain.com/v1/bsv/main/tx/raw", {
           method: "POST",
@@ -443,6 +406,16 @@
         const txId = await broadcastTx(tx);
         console.log(txId);
       };
+
+      if (localStorage.getItem("registered")) {
+        document.getElementById("registration").style.display = "none";
+        document.getElementById("verification").style.display = "none";
+        document.getElementById("login").style.display = "block";
+      } else {
+        document.getElementById("registration").style.display = "block";
+        document.getElementById("verification").style.display = "none";
+        document.getElementById("login").style.display = "none";
+      }
 
       //   sendFunds("1AGFr8YeV4AmCVQrkfZYfHw77KrK6XNfVK", 100000);
     </script>
