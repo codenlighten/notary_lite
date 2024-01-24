@@ -122,6 +122,7 @@
       <div class="forms" id="login">
         <h2>Login</h2>
         <form id="verifyForm">
+          <input type="text" name="data" placeholder="Email" />
           <input type="password" name="data" placeholder="Password" />
           <button type="submit">Login</button>
         </form>
@@ -319,6 +320,7 @@
             document.getElementById("message").innerHTML = message;
             document.getElementById("message").style.display = "block";
             document.getElementById(resultElementId).style.display = "block";
+            document.getElementById("verification").style.display = "block";
             if (registerStatus) {
               localStorage.setItem("registered", true);
             }
@@ -351,7 +353,9 @@
           e.preventDefault();
           const identity = JSON.parse(localStorage.getItem("identity"));
           const address = localStorage.getItem("address");
-          const password = document.getElementsByName("data")[10].value;
+          //email
+          const email = document.getElementsByName("data")[0].value;
+          const password = document.getElementsByName("data")[1].value;
           const passwordHash = bsv.crypto.Hash.sha256(
             Buffer.from(password)
           ).toString("hex");
@@ -366,6 +370,7 @@
               password: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,
+              email: email,
               publicKey: localStorage.getItem("publicKey"),
               address: localStorage.getItem("address"),
             },

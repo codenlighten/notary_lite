@@ -285,7 +285,63 @@ app.post("/registerId", async (req, res) => {
 });
 
 //login with password, signed data and public key
+
+//login with password, signed data and public key
 app.post("/login", async (req, res) => {
+  try {
+    if (busy) {
+      res.send("busy");
+      return;
+    }
+    busy = true;
+    const data = req.body.data;
+    const signature = req.body.signature;
+    const address = req.body.address;
+    const publicKey = req.body.publicKey;
+    const email = req.body.email;
+
+    //check if public key is approved
+    if (!approvedPublicKeys.includes(publicKey)) {
+      res.send("not approved");
+      busy = false;
+      return;
+    }
+    //verify data
+    const result = verifyData(data, signature, address);
+    if (!result) {
+      res.send("not verified");
+      busy = false;
+      return;
+    }
+    //op return
+    const hash = hashData(data);
+    const txid = await publishOpReturn(
+      "text/plain",
+      data,
+      signature,
+      address,
+      hash,
+      monitorinAddress,
+      "login"
+    );
+    //generate token
+    //otp
+    const otpCode = generateOTP();
+    //send email
+    send2FACode(email, otpCode);
+    busy = false;
+    res.send({
+      txid,
+      message:
+        "An email has been sent to your email address with a one time password, please check your inbox or spam folder",
+    });
+  } catch (e) {
+    busy = false;
+    console.log(e);
+    res.send("error");
+  }
+});
+app.post("/otpVerify", async (req, res) => {
   try {
     if (busy) {
       res.send("busy");
@@ -329,10 +385,22 @@ app.post("/login", async (req, res) => {
         busy = false;
         return;
       }
-      //verify password
-      res.send("success");
-      busy = false;
+      //jwt token
+      //op return
+      const hash = hashData(data);
+      const txid = await publishOpReturn(
+        "text/plain",
+        data,
+        signature,
+        address,
+        hash,
+        monitorinAddress,
+        "otpVerify"
+      );
+      const token = generateToken({ email });
+      res.send({ token, message: "success", txid });
       //remove otp
+      busy = false;
       removeOTP(otpCode, email);
     }
   } catch (e) {
