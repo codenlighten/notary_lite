@@ -247,7 +247,7 @@ app.post("/registerId", async (req, res) => {
     const email = req.body.email;
     const birthdate = req.body.birthdate;
     let country = req.body.country;
-    let passwordHash = req.body.password;
+    let passwordHash = req.body.passwordHash;
     const encryptedKeys = req.body.encryptedKeys;
     //lowercase
     data = data.toLowerCase();

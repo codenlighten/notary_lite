@@ -300,7 +300,7 @@
               birthdate: birthdate,
               country: country,
               email: email,
-              password: doubleHash,
+              passwordHash: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,
               publicKey: localStorage.getItem("publicKey"),
@@ -317,9 +317,6 @@
         .getElementById("loginForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const identity = JSON.parse(localStorage.getItem("identity"));
-          const address = localStorage.getItem("address");
-          //email
           const email = document.getElementsByName("data")[0].value;
           password = document.getElementsByName("data")[1].value;
           const passwordHash = bsv.crypto.Hash.sha256(
@@ -333,12 +330,8 @@
           sendData(
             "/login",
             {
-              password: doubleHash,
-              hash: hash.toString("hex"),
-              signature: signature,
+              passwordHash: doubleHash,
               email: email,
-              publicKey: localStorage.getItem("publicKey"),
-              address: localStorage.getItem("address"),
             },
             "verifyResult",
             true,
@@ -351,21 +344,11 @@
         .getElementById("verifyOTPForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          // const identity = JSON.parse(localStorage.getItem("identity"));
-          // const address = localStorage.getItem("address");
-          //email
           const otp = document.getElementsByName("data")[0].value;
-          // const hash = hashData(identity.data);
-          // const signature = signData(identity.data);
           sendData(
             "/otpVerify",
             {
               otp: otp,
-              // hash: hash.toString("hex"),
-              // signature: signature,
-              // email: identity.email,
-              // publicKey: localStorage.getItem("publicKey"),
-              // address: localStorage.getItem("address"),
             },
             "verifyOTPResult",
             false,
