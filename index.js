@@ -284,14 +284,14 @@ app.post("/registerId", async (req, res) => {
     country = country.replace(/\s/g, "");
     const hash = req.body.hash;
     const signature = req.body.signature;
-    let address = req.body.address;
+    let memberAddress = req.body.address;
     const publicKey = req.body.publicKey;
     const txid = await publishOpReturn(
       "text/plain",
       encryptedMemberData,
       encryptedKeys,
       signature,
-      address,
+      memberAddress,
       hash,
       registeredAddress,
       "register"
@@ -449,7 +449,7 @@ app.post("/otpVerify", async (req, res) => {
       res.send({ message: "otp expired" });
       busy = false;
       //remove otp
-      removeOTP(otpCode, email);
+      removeOTP(otpCode, otpData.email);
       return;
     } else {
       const email = otpData.email;
