@@ -303,14 +303,14 @@ app.post("/login", async (req, res) => {
 
     //check if public key is approved
     if (!approvedPublicKeys.includes(publicKey)) {
-      res.send("not approved");
+      res.send({ message: "not approved" });
       busy = false;
       return;
     }
     //verify data
     const result = verifyData(data, signature, address);
     if (!result) {
-      res.send("not verified");
+      res.send({ message: "not verified" });
       busy = false;
       return;
     }
@@ -359,7 +359,7 @@ app.post("/otpVerify", async (req, res) => {
     //check if otp exists
     const otpData = checkOTP(otpCode, email);
     if (!otpData) {
-      res.send("otp not found");
+      res.send({ message: "otp not found" });
       busy = false;
       return;
     }
@@ -368,7 +368,7 @@ app.post("/otpVerify", async (req, res) => {
     const diff = now - date;
     //check if otp is expired 5 minutes
     if (diff > 300000) {
-      res.send("otp expired");
+      res.send({ message: "otp expired" });
       busy = false;
       //remove otp
       removeOTP(otpCode, email);
@@ -376,7 +376,7 @@ app.post("/otpVerify", async (req, res) => {
     } else {
       //check if public key is approved
       if (!approvedPublicKeys.includes(publicKey)) {
-        res.send("not approved");
+        res.send({ message: "not approved" });
         busy = false;
         return;
       }
