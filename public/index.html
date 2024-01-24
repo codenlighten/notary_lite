@@ -122,7 +122,7 @@
       </div>
       <div class="forms" id="login">
         <h2>Login</h2>
-        <form id="verifyForm">
+        <form id="loginForm">
           <input type="text" name="data" placeholder="Email" />
           <input type="password" name="data" placeholder="Password" />
           <button type="submit">Login</button>
@@ -302,6 +302,65 @@
             true
           );
         });
+
+      // login
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const identity = JSON.parse(localStorage.getItem("identity"));
+          const address = localStorage.getItem("address");
+          //email
+          const email = document.getElementsByName("data")[0].value;
+          const password = document.getElementsByName("data")[1].value;
+          const passwordHash = bsv.crypto.Hash.sha256(
+            Buffer.from(password)
+          ).toString("hex");
+          const doubleHash = bsv.crypto.Hash.sha256(
+            Buffer.from(passwordHash)
+          ).toString("hex");
+          const hash = hashData(identity.data);
+          const signature = signData(identity.data);
+          sendData(
+            "/login",
+            {
+              password: doubleHash,
+              hash: hash.toString("hex"),
+              signature: signature,
+              email: email,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            },
+            "verifyResult",
+            false
+          );
+        });
+
+      // verify OTP
+      document
+        .getElementById("verifyOTPForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const identity = JSON.parse(localStorage.getItem("identity"));
+          const address = localStorage.getItem("address");
+          //email
+          const otp = document.getElementsByName("data")[0].value;
+          const hash = hashData(identity.data);
+          const signature = signData(data);
+          sendData(
+            "/verifyOTP",
+            {
+              otp: otp,
+              hash: hash.toString("hex"),
+              signature: signature,
+              email: identity.email,
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            },
+            "verifyOTPResult",
+            false
+          );
+        });
       function sendData(url, data, resultElementId, txStatus, registerStatus) {
         fetch(url, {
           method: "POST",
@@ -346,65 +405,6 @@
             });
           });
       };
-
-      // login
-      document
-        .getElementById("verifyForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const identity = JSON.parse(localStorage.getItem("identity"));
-          const address = localStorage.getItem("address");
-          //email
-          const email = document.getElementsByName("data")[0].value;
-          const password = document.getElementsByName("data")[1].value;
-          const passwordHash = bsv.crypto.Hash.sha256(
-            Buffer.from(password)
-          ).toString("hex");
-          const doubleHash = bsv.crypto.Hash.sha256(
-            Buffer.from(passwordHash)
-          ).toString("hex");
-          const hash = hashData(identity.data);
-          const signature = signData(data);
-          sendData(
-            "/verifyID",
-            {
-              password: doubleHash,
-              hash: hash.toString("hex"),
-              signature: signature,
-              email: email,
-              publicKey: localStorage.getItem("publicKey"),
-              address: localStorage.getItem("address"),
-            },
-            "verifyResult",
-            false
-          );
-        });
-
-      // verify OTP
-      document
-        .getElementById("verifyOTPForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const identity = JSON.parse(localStorage.getItem("identity"));
-          const address = localStorage.getItem("address");
-          //email
-          const otp = document.getElementsByName("data")[0].value;
-          const hash = hashData(identity.data);
-          const signature = signData(data);
-          sendData(
-            "/verifyOTP",
-            {
-              otp: otp,
-              hash: hash.toString("hex"),
-              signature: signature,
-              email: identity.email,
-              publicKey: localStorage.getItem("publicKey"),
-              address: localStorage.getItem("address"),
-            },
-            "verifyOTPResult",
-            false
-          );
-        });
 
       const broadcastTx = (tx) => {
         return fetch("https://api.whatsonchain.com/v1/bsv/main/tx/raw", {
