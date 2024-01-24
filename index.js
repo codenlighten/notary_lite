@@ -392,6 +392,12 @@ app.post("/login", async (req, res) => {
       monitorinAddress,
       "login"
     );
+    const transactionObject = {
+      email,
+      txid,
+      date: new Date(),
+    };
+    addTransaction(transactionObject);
     //generate token
     //otp
     const otpCode = generateOTP();
@@ -458,10 +464,17 @@ app.post("/otpVerify", async (req, res) => {
       // }
       //jwt token
       //op return
-      const hash = hashData(otpCode);
-      const signature = signData(otpCode, wif);
-      const address = fundingAddress; //change to signer address
-      const data = otpCode;
+      const email = otpData.email;
+      const member = await getMemberByEmailAddress(email);
+      if (!member) {
+        res.send({ message: "email not found" });
+        busy = false;
+        return;
+      }
+      const hash = hashData(member.email);
+      const signature = signData(member.email, wif);
+      const address = member.address; //change to signer address
+      const data = member.email;
 
       const txid = await publishOpReturn(
         "text/plain",
@@ -472,6 +485,12 @@ app.post("/otpVerify", async (req, res) => {
         monitorinAddress,
         "otpVerify"
       );
+      const transactionObject = {
+        email,
+        txid,
+        date: new Date(),
+      };
+      addTransaction(transactionObject);
       const token = generateToken({ email });
       res.send({ token, message: "success", txid, date: new Date() });
       //remove otp
