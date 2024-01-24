@@ -136,9 +136,6 @@
     <script>
       const Buffer = bsv.deps.Buffer;
       const generateKeys = () => {
-        if (address && !confirm("Generate new keys?")) {
-          return;
-        }
         const Mnemonic = bsv.Mnemonic;
         const mnemonic = new Mnemonic();
         const fullPath = "m/44'/0'/0'/0/0";
