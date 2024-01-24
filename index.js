@@ -271,6 +271,7 @@ app.post("/registerId", async (req, res) => {
     const birthdate = req.body.birthdate;
     let country = req.body.country;
     let passwordHash = req.body.password;
+    const encryptedKeys = req.body.encryptedKeys;
     //lowercase
     data = data.toLowerCase();
     firstName = firstName.toLowerCase();
@@ -288,6 +289,7 @@ app.post("/registerId", async (req, res) => {
     const txid = await publishOpReturn(
       "text/plain",
       encryptedMemberData,
+      encryptedKeys,
       signature,
       address,
       hash,
@@ -302,6 +304,7 @@ app.post("/registerId", async (req, res) => {
       birthdate,
       country,
       passwordHash,
+      encryptedKeys,
       address,
       publicKey,
       data,
@@ -318,6 +321,7 @@ app.post("/registerId", async (req, res) => {
       passwordHash,
       email,
       encryptedMember,
+      encryptedKeys,
       txid,
       address,
       publicKey,
@@ -482,7 +486,7 @@ app.post("/otpVerify", async (req, res) => {
         message: "success",
         txid,
         date: new Date(),
-        memeber: decrypted,
+        member: decrypted,
       });
       //remove otp
       busy = false;

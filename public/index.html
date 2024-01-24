@@ -260,7 +260,14 @@
             Buffer.from(passwordHash)
           ).toString("hex");
           const data = `${firstName}${lastName}${birthdate}${country}`;
-
+          const encryptedKeys = encrypt(
+            JSON.stringify({
+              privateKey: localStorage.getItem("privateKey"),
+              publicKey: localStorage.getItem("publicKey"),
+              address: localStorage.getItem("address"),
+            }),
+            password
+          );
           const encryptedData = encrypt(data.toLowerCase(), password);
           const hash = hashData(data.toLowerCase());
           const signature = signData(data.toLowerCase());
@@ -269,6 +276,7 @@
             JSON.stringify({
               data: data.toLowerCase(),
               encryptedData: encryptedData,
+              encryptedKeys: encryptedKeys,
               firstName: firstName.toLowerCase(),
               lastName: lastName.toLowerCase(),
               birthdate: birthdate,
@@ -286,6 +294,7 @@
             {
               data: data,
               encryptedData: encryptedData,
+              encryptedKeys: encryptedKeys,
               firstName: firstName,
               lastName: lastName,
               birthdate: birthdate,
@@ -395,8 +404,10 @@
               localStorage.setItem("verifiedOTP", true);
               localStorage.setItem("token", json.token);
               localStorage.setItem("date", json.date);
-              const member = decrypt(json.encrypted, password);
+              const member = json.member;
+              const keys = decrypt(json.member.encryptedKeys, password);
               localStorage.setItem("member", JSON.stringify(member));
+              localStorage.setItem("keys", keys);
               location.href = "/dashboard";
             }
           })
