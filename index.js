@@ -10,6 +10,12 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 const fs = require("fs");
+//uuid
+const { v4: uuidv4 } = require("uuid");
+const jwt = require("jsonwebtoken");
+//otp-generator
+const otp = require("otp-generator");
+const { send2FACode } = require("./nodemail");
 const wif = process.env.FUNDING_WIF;
 const fundingAddress = process.env.FUNDING_ADDRESS;
 const monitorinAddress = process.env.MONITORING_ADDRESS;
@@ -17,6 +23,57 @@ const registeredAddress = process.env.REGISTERED_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
 const address = bsv.Address.fromPublicKey(publicKey);
+
+// jwt token function
+const generateToken = (data) => {
+  const token = jwt.sign(data, process.env.JWT_SECRET);
+  return token;
+};
+//uuid function
+const generateUUID = () => {
+  const uuid = uuidv4();
+  console.log(uuid);
+  return uuid;
+};
+//otp function
+const generateOTP = () => {
+  const otpCode = otp.generate(6, {
+    upperCase: false,
+    specialChars: false,
+    alphabets: false,
+  });
+  console.log(otpCode);
+  return otpCode;
+};
+const otpFile = fs.readFileSync("otp.json", "utf8");
+const otpJson = JSON.parse(otpFile);
+//store otp in json file
+const storeOTP = (otpCode, email) => {
+  const data = {
+    email,
+    otpCode,
+    date: new Date(),
+  };
+  otpJson.push(data);
+  fs.writeFileSync("otp.json", JSON.stringify(otpJson, null, 2));
+};
+
+//get otp.json file and check array of otp for code plus data
+const checkOTP = (otpCode, email) => {
+  const data = otpJson.find((item) => {
+    return item.email === email && item.otpCode === otpCode;
+  });
+  return data;
+};
+
+//remove otp from json file
+const removeOTP = (otpCode, email) => {
+  const index = otpJson.findIndex((item) => {
+    return item.email === email && item.otpCode === otpCode;
+  });
+  otpJson.splice(index, 1);
+  fs.writeFileSync("otp.json", JSON.stringify(otpJson, null, 2));
+};
 
 const approvedPublicKeys = [];
 //check if file exists authorized.json
@@ -178,6 +235,7 @@ app.post("/registerId", async (req, res) => {
     const encryptedData = req.body.encryptedData;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
+    const email = req.body.email;
     const birthdate = req.body.birthdate;
     let country = req.body.country;
     let passwordHash = req.body.password;
@@ -210,7 +268,15 @@ app.post("/registerId", async (req, res) => {
       "authorized.json",
       JSON.stringify(approvedPublicKeys, null, 2)
     );
-    res.send(txid);
+    //otp
+    const otpCode = generateOTP();
+    //send email
+    send2FACode(email, otpCode);
+    res.send({
+      txid,
+      message:
+        "An email has been sent to your email address, please check your inbox or spam folder",
+    });
   } catch (e) {
     busy = false;
     console.log(e);
@@ -230,22 +296,45 @@ app.post("/login", async (req, res) => {
     const signature = req.body.signature;
     const address = req.body.address;
     const publicKey = req.body.publicKey;
-
-    //check if public key is approved
-    if (!approvedPublicKeys.includes(publicKey)) {
-      res.send("not approved");
+    const email = req.body.email;
+    const otpCode = req.body.otpCode;
+    //check if otp exists
+    const otpData = checkOTP(otpCode, email);
+    if (!otpData) {
+      res.send("otp not found");
       busy = false;
       return;
     }
-    //verify data
-    const result = verifyData(data, signature, address);
-    if (!result) {
-      res.send("not verified");
+    const date = new Date(otpData.date);
+    const now = new Date();
+    const diff = now - date;
+    //check if otp is expired 5 minutes
+    if (diff > 300000) {
+      res.send("otp expired");
       busy = false;
+      //remove otp
+      removeOTP(otpCode, email);
       return;
+    } else {
+      //check if public key is approved
+      if (!approvedPublicKeys.includes(publicKey)) {
+        res.send("not approved");
+        busy = false;
+        return;
+      }
+      //verify data
+      const result = verifyData(data, signature, address);
+      if (!result) {
+        res.send("not verified");
+        busy = false;
+        return;
+      }
+      //verify password
+      res.send("success");
+      busy = false;
+      //remove otp
+      removeOTP(otpCode, email);
     }
-    //verify password
-    res.send("success");
   } catch (e) {
     busy = false;
     console.log(e);

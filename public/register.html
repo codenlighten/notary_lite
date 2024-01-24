@@ -72,7 +72,9 @@
       margin: 0 auto;
       width: 200px;
     }
-
+    .forms {
+      display: none;
+    }
     @media (max-width: 600px) {
       .mainContainer {
         padding: 10px;
@@ -93,23 +95,37 @@
         <a href="https://bitcoinsv.com/" target="_blank">Bitcoin SV</a>
         blockchain.
       </p>
-      <h2>Register ID</h2>
-      <form id="publishForm">
-        <input type="text" name="data" placeholder="First Name" />
-        <input type="text" name="data" placeholder="Last Name" />
-        <input type="date" name="data" placeholder="Birthdate" />
-        <input type="text" name="data" placeholder="Country" />
-        <input type="password" name="data" placeholder="Password" />
-        <input type="password" name="data" placeholder="Repeat Password" />
-        <button type="submit">Register</button>
-      </form>
-      <p class="result" id="publishResult"></p>
-      <h2>Login</h2>
-      <form id="verifyForm">
-        <input type="password" name="data" placeholder="Password" />
-        <button type="submit">Login</button>
-      </form>
-      <p class="result" id="verifyResult"></p>
+      <div class="forms" id="registration">
+        <h2>Register ID</h2>
+        <form id="publishForm">
+          <input type="text" name="data" placeholder="First Name" />
+          <input type="text" name="data" placeholder="Last Name" />
+          <input type="date" name="data" placeholder="Birthdate" />
+          <input type="text" name="data" placeholder="Country" />
+          <!-- email -->
+          <input placeholder="email address" type="email" id="emailRegister" />
+          <input type="password" name="data" placeholder="Password" />
+          <input type="password" name="data" placeholder="Repeat Password" />
+          <button type="submit">Register</button>
+        </form>
+        <p class="result" id="publishResult"></p>
+        <p class="result" id="message"></p>
+      </div>
+      <div class="forms" id="verification">
+        <h2>Verify OTP Code</h2>
+        <form id="verifyForm">
+          <input type="text" name="data" placeholder="OTP Code" />
+          <button type="submit">Verify</button>
+        </form>
+      </div>
+      <div class="forms" id="login">
+        <h2>Login</h2>
+        <form id="verifyForm">
+          <input type="password" name="data" placeholder="Password" />
+          <button type="submit">Login</button>
+        </form>
+        <p class="result" id="verifyResult"></p>
+      </div>
       <!-- copyright 2024 NotaryHash and SmartLedger -->
       <p>&copy; 2024 NotaryHash and SmartLedger. All rights reserved.</p>
     </div>
@@ -205,10 +221,32 @@
           const lastName = document.getElementsByName("data")[1].value;
           const birthdate = document.getElementsByName("data")[2].value;
           const country = document.getElementsByName("data")[3].value;
+          const email = document.getElementById("emailRegister").value;
           const password = document.getElementsByName("data")[4].value;
           const repeatPassword = document.getElementsByName("data")[5].value;
+          console.log(
+            firstName,
+            lastName,
+            birthdate,
+            country,
+            email,
+            password,
+            repeatPassword
+          );
           if (password !== repeatPassword) {
             alert("Passwords do not match");
+            return;
+          }
+          if (
+            !firstName ||
+            !lastName ||
+            !birthdate ||
+            !country ||
+            !password ||
+            !repeatPassword ||
+            !email
+          ) {
+            alert("Please fill in all fields");
             return;
           }
           const passwordHash = bsv.crypto.Hash.sha256(
@@ -232,6 +270,7 @@
               lastName: lastName.toLowerCase(),
               birthdate: birthdate,
               country: country.toLowerCase(),
+              email: email.toLowerCase(),
               password: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,
@@ -248,6 +287,7 @@
               lastName: lastName,
               birthdate: birthdate,
               country: country,
+              email: email,
               password: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,
@@ -269,9 +309,14 @@
         })
           .then((response) => response.text())
           .then((data) => {
+            const json = JSON.parse(data);
+            const txid = json.txid;
+            const message = json.message;
             document.getElementById(resultElementId).innerHTML = txStatus
-              ? `<a href="https://whatsonchain.com/tx/${data}" target="_blank">${data}</a>`
+              ? `<a href="https://whatsonchain.com/tx/${txid}" target="_blank">${txid}</a>`
               : data;
+            document.getElementById("message").innerHTML = message;
+            document.getElementById("message").style.display = "block";
             document.getElementById(resultElementId).style.display = "block";
             if (registerStatus) {
               localStorage.setItem("registered", true);
@@ -361,6 +406,16 @@
         const txId = await broadcastTx(tx);
         console.log(txId);
       };
+
+      if (localStorage.getItem("registered")) {
+        document.getElementById("registration").style.display = "none";
+        document.getElementById("verification").style.display = "none";
+        document.getElementById("login").style.display = "block";
+      } else {
+        document.getElementById("registration").style.display = "block";
+        document.getElementById("verification").style.display = "none";
+        document.getElementById("login").style.display = "none";
+      }
 
       //   sendFunds("1AGFr8YeV4AmCVQrkfZYfHw77KrK6XNfVK", 100000);
     </script>
