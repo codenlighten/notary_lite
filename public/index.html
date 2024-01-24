@@ -395,10 +395,7 @@
               localStorage.setItem("verifiedOTP", true);
               localStorage.setItem("token", json.token);
               localStorage.setItem("date", json.date);
-              const decryptedData = decrypt(json.member.encrypted, password);
-              console.log(decryptedData);
-              const member = json.member;
-              member.decrypted = decryptedData;
+              const member = decrypt(json.encrypted, password);
               localStorage.setItem("member", JSON.stringify(member));
               location.href = "/dashboard";
             }
