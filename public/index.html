@@ -136,6 +136,7 @@
     </div>
     <script src="encryption.js"></script>
     <script>
+      let password = "";
       const Buffer = bsv.deps.Buffer;
       const generateKeys = () => {
         const Mnemonic = bsv.Mnemonic;
@@ -224,7 +225,7 @@
           const birthdate = document.getElementsByName("data")[2].value;
           const country = document.getElementsByName("data")[3].value;
           const email = document.getElementById("emailRegister").value;
-          const password = document.getElementsByName("data")[4].value;
+          password = document.getElementsByName("data")[4].value;
           const repeatPassword = document.getElementsByName("data")[5].value;
           console.log(
             firstName,
@@ -311,7 +312,7 @@
           const address = localStorage.getItem("address");
           //email
           const email = document.getElementsByName("data")[0].value;
-          const password = document.getElementsByName("data")[1].value;
+          password = document.getElementsByName("data")[1].value;
           const passwordHash = bsv.crypto.Hash.sha256(
             Buffer.from(password)
           ).toString("hex");
@@ -394,6 +395,11 @@
               localStorage.setItem("verifiedOTP", true);
               localStorage.setItem("token", json.token);
               localStorage.setItem("date", json.date);
+              const decryptedData = decrypt(json.member.encrypted, password);
+              console.log(decryptedData);
+              const member = json.member;
+              member.decrypted = decryptedData;
+              localStorage.setItem("member", JSON.stringify(member));
               location.href = "/dashboard";
             }
           })

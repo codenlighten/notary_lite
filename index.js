@@ -492,7 +492,7 @@ app.post("/otpVerify", async (req, res) => {
       };
       addTransaction(transactionObject);
       const token = generateToken({ email });
-      res.send({ token, message: "success", txid, date: new Date() });
+      res.send({ token, message: "success", txid, date: new Date(), member });
       //remove otp
       busy = false;
       removeOTP(otpCode, email);
