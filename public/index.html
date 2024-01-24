@@ -98,7 +98,10 @@
       </p>
       <p class="result" id="resultTxid"></p>
       <p class="result" id="message"></p>
-
+      <div id="buttonChoices">
+        <button id="showRegistration">Register</button>
+        <button id="showLogin">Login</button>
+      </div>
       <div class="forms" id="registration">
         <h2>Register ID</h2>
         <form id="publishForm">
@@ -466,6 +469,20 @@
           inputs[i].value = "";
         }
       };
+      document
+        .getElementById("showRegistration")
+        .addEventListener("click", () => {
+          document.getElementById("registration").style.display = "block";
+          document.getElementById("verification").style.display = "none";
+          document.getElementById("login").style.display = "none";
+          clearInputs();
+        });
+      document.getElementById("showLogin").addEventListener("click", () => {
+        document.getElementById("registration").style.display = "none";
+        document.getElementById("verification").style.display = "none";
+        document.getElementById("login").style.display = "block";
+        clearInputs();
+      });
     </script>
   </body>
 </html>
