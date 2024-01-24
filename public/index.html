@@ -351,21 +351,21 @@
         .getElementById("verifyOTPForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const identity = JSON.parse(localStorage.getItem("identity"));
-          const address = localStorage.getItem("address");
+          // const identity = JSON.parse(localStorage.getItem("identity"));
+          // const address = localStorage.getItem("address");
           //email
           const otp = document.getElementsByName("data")[0].value;
-          const hash = hashData(identity.data);
-          const signature = signData(identity.data);
+          // const hash = hashData(identity.data);
+          // const signature = signData(identity.data);
           sendData(
             "/otpVerify",
             {
               otp: otp,
-              hash: hash.toString("hex"),
-              signature: signature,
-              email: identity.email,
-              publicKey: localStorage.getItem("publicKey"),
-              address: localStorage.getItem("address"),
+              // hash: hash.toString("hex"),
+              // signature: signature,
+              // email: identity.email,
+              // publicKey: localStorage.getItem("publicKey"),
+              // address: localStorage.getItem("address"),
             },
             "verifyOTPResult",
             false,
@@ -405,7 +405,8 @@
               localStorage.setItem("token", json.token);
               localStorage.setItem("date", json.date);
               const member = json.member;
-              const keys = decrypt(json.member.encryptedKeys, password);
+              const encryptedKeys = member.encryptedKeys;
+              const keys = decrypt(encryptedKeys, password);
               localStorage.setItem("member", JSON.stringify(member));
               localStorage.setItem("keys", keys);
               location.href = "/dashboard";
