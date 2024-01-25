@@ -318,30 +318,26 @@
       document.getElementById("privateKey").innerHTML = `**********`;
       let private = false;
       document.getElementById("mnemonic").innerHTML = `**********`;
-      document
-        .getElementById("privateKey")
-        .addEventListener("click", function (e) {
-          e.preventDefault();
-          if (private) {
-            this.innerHTML = `**********`;
-            private = false;
-          } else {
-            this.innerHTML = localStorage.getItem("privateKey");
-            private = true;
-          }
-        });
-      document
-        .getElementById("mnemonic")
-        .addEventListener("click", function (e) {
-          e.preventDefault();
-          if (private) {
-            this.innerHTML = `**********`;
-            private = false;
-          } else {
-            this.innerHTML = localStorage.getItem("mnemonic");
-            private = true;
-          }
-        });
+      document.getElementById("privateKey").addEventListener("click", () => {
+        if (!private) {
+          document.getElementById("privateKey").innerHTML =
+            localStorage.getItem("privateKey");
+          private = true;
+        } else {
+          document.getElementById("privateKey").innerHTML = `**********`;
+          private = false;
+        }
+      });
+      document.getElementById("mnemonic").addEventListener("click", () => {
+        if (!private) {
+          document.getElementById("mnemonic").innerHTML =
+            localStorage.getItem("mnemonic");
+          private = true;
+        } else {
+          document.getElementById("mnemonic").innerHTML = `**********`;
+          private = false;
+        }
+      });
 
       document
         .getElementById("publishForm")
