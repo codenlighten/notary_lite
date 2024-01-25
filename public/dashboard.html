@@ -250,20 +250,8 @@
           publicKey
         );
       };
-      //if not keys in local storage, create them
-      if (!localStorage.getItem("privateKey")) {
-        const jsonString = generateKeys();
-        const keys = JSON.parse(jsonString);
-        const privateKey = bsv.PrivateKey.fromWIF(keys.privateKey);
-        const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
-        const address = bsv.Address.fromPublicKey(publicKey).toString();
-        const mnemonic = keys.mnemonic;
-        const path = keys.path;
-        localStorage.setItem("privateKey", privateKey);
-        localStorage.setItem("publicKey", publicKey);
-        localStorage.setItem("address", address);
-        localStorage.setItem("mnemonic", mnemonic);
-        localStorage.setItem("path", path);
+      if (!localStorage.getItem("registered")) {
+        location.href = "/";
       }
       document.getElementById("publicKey").innerHTML =
         localStorage.getItem("publicKey");
