@@ -254,6 +254,7 @@
 
       //display qr code high resolution
       const displayQRCode = (data) => {
+        //clear qr code
         const qr = new QRious({
           element: document.getElementById("qr"),
           value: data,
@@ -433,7 +434,7 @@
             );
             // add download link for qr code png
             const qr = document.getElementById("qr");
-            qr.innerHTML = "";
+            //remove previous download link
             const qrPng = qr.toDataURL("image/png");
             const qrPngLink = document.createElement("a");
             qrPngLink.href = qrPng;
