@@ -422,6 +422,7 @@
         })
           .then((response) => response.text())
           .then((data) => {
+            document.getElementById(resultElementId).innerHTML = "";
             document.getElementById(resultElementId).innerHTML = txStatus
               ? `<a href="https://whatsonchain.com/tx/${data}" target="_blank">${data}</a>`
               : data;
@@ -432,6 +433,7 @@
             );
             // add download link for qr code png
             const qr = document.getElementById("qr");
+            qr.innerHTML = "";
             const qrPng = qr.toDataURL("image/png");
             const qrPngLink = document.createElement("a");
             qrPngLink.href = qrPng;
