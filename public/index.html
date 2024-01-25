@@ -431,8 +431,9 @@
               console.log(encryptedKeys, member, token, date);
               const keys = decrypt(encryptedKeys, password);
               //store keys in local storage
-              const { privateKey, publicKey, address, mnemonic } =
+              const { privateKey, publicKey, address, mnemonic, path } =
                 JSON.parse(keys);
+              localStorage.setItem("path", path);
               localStorage.setItem("privateKey", privateKey);
               localStorage.setItem("publicKey", publicKey);
               localStorage.setItem("address", address);
