@@ -418,6 +418,13 @@
             displayQRCode(
               `https://plugins.whatsonchain.com/api/plugin/main/${data}`
             );
+            // add download link for qr code
+            const qrGeneration = document.getElementById("qrGeneration");
+            const qrDownloadLink = document.createElement("a");
+            qrDownloadLink.href = `https://plugins.whatsonchain.com/api/plugin/main/${data}`;
+            qrDownloadLink.download = "qr.png";
+            qrDownloadLink.innerHTML = "Download QR Code";
+            qrGeneration.appendChild(qrDownloadLink);
           })
           .catch((error) => {
             console.error("Error:", error);
