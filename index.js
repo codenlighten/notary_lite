@@ -39,19 +39,21 @@ const privateKey = bsv.PrivateKey.fromWIF(wif);
 const encryptedData = (data, password) => {
   const algorithm = "aes-256-cbc";
   const key = crypto.scryptSync(password, "salt", 32);
-  const iv = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(16); // Initialization vector.
   const cipher = crypto.createCipheriv(algorithm, key, iv);
   let encrypted = cipher.update(data, "utf8", "hex");
   encrypted += cipher.final("hex");
-  return encrypted;
+  const ivHex = iv.toString("hex"); // Convert IV to hex string for storage.
+  return `${ivHex}:${encrypted}`; // Combine IV and encrypted data.
 };
-console.log(encryptedData("test", "test"));
-const decryptedData = (data, password) => {
+const decryptedData = (encrypted, password) => {
   const algorithm = "aes-256-cbc";
   const key = crypto.scryptSync(password, "salt", 32);
-  const iv = crypto.randomBytes(16);
+  const parts = encrypted.split(":"); // Split IV and encrypted data.
+  const iv = Buffer.from(parts.shift(), "hex"); // Extract IV from data.
+  const encryptedData = parts.join(":"); // Remaining parts are the encrypted data.
   const decipher = crypto.createDecipheriv(algorithm, key, iv);
-  let decrypted = decipher.update(data, "hex", "utf8");
+  let decrypted = decipher.update(encryptedData, "hex", "utf8");
   decrypted += decipher.final("utf8");
   return decrypted;
 };
