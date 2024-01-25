@@ -161,7 +161,7 @@
       <div class="forms" id="login">
         <h2>Login</h2>
         <form id="loginForm">
-          <input type="text" name="data" placeholder="Email" />
+          <input id="loginEmail" type="text" name="data" placeholder="Email" />
           <input type="password" name="data" placeholder="Password" />
           <button type="submit">Login</button>
         </form>
@@ -511,8 +511,8 @@
         document.getElementById("verification").style.display = "none";
         document.getElementById("login").style.display = "block";
         clearInputs();
-        document.getElementsByName("data")[0].focus();
-        document.getElementsByName("data")[0].scrollIntoView();
+        document.getElementsById("loginEmail").focus();
+        document.getElementsById("loginEmail").scrollIntoView();
       });
     </script>
   </body>
