@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transaction Explorer</title>
+    <script src="https://unpkg.com/bsv@1.5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-message.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-mnemonic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-ecies.min.js"></script>
+    <!-- qr scanner -->
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+      label {
+        display: block;
+      }
+      input {
+        width: 100%;
+        max-width: 500px;
+      }
+      button {
+        margin-top: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #eee;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #ddd;
+      }
+      pre {
+        background-color: #eee;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      #scanner {
+        width: 100%;
+        max-width: 500px;
+        height: 500px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+      }
+
+      @media (min-width: 500px) {
+        #scanner {
+          margin: 10px auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Transaction Explorer</h1>
+    <p>
+      <label for="txid">Transaction ID</label>
+      <input type="text" id="txid" />
+      <button id="load">Load</button>
+    </p>
+    <p id="txinfo"></p>
+    <p id="opreturn"></p>
+    <div id="scanner"></div>
+    <script>
+      //get txinfo from whatsonchain
+      function getTxInfo(txid) {
+        return fetch("https://api.whatsonchain.com/v1/bsv/main/tx/hash/" + txid)
+          .then((response) => response.json())
+          .then((data) => {
+            return data;
+          });
+      }
+      //   display txinfo
+      function displayTxInfo(txinfo) {
+        document.getElementById("txinfo").innerHTML = JSON.stringify(
+          txinfo,
+          null,
+          2
+        );
+      }
+      //   check for op_return
+      function checkOpReturn(txinfo) {
+        if (txinfo.vout[0].scriptPubKey.type === "nulldata") {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      //display op_return
+      function displayOpReturn(txinfo) {
+        document.getElementById("opreturn").innerHTML =
+          txinfo.vout[0].scriptPubKey.asm;
+      }
+
+      //scan qr code
+      function scanQRCode() {
+        const html5QrCode = new Html5Qrcode("scanner");
+        html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: 250,
+          },
+          (qrCodeMessage) => {
+            console.log(qrCodeMessage);
+            document.getElementById("txid").value = qrCodeMessage;
+            document.getElementById("load").click();
+            html5QrCode.stop();
+          },
+          (errorMessage) => {
+            console.log(errorMessage);
+          }
+        );
+      }
+
+      //chcck for query params
+      const urlParams = new URLSearchParams(window.location.search);
+      const txid = urlParams.get("txid");
+      if (txid) {
+        document.getElementById("txid").value = txid;
+        document.getElementById("load").click();
+      }
+    </script>
+  </body>
+</html>

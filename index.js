@@ -247,6 +247,9 @@ app.get("/", (req, res) => {
 app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
+app.get("/explorer", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "explorer.html"));
+});
 
 app.post("/registerId", async (req, res) => {
   try {
