@@ -439,7 +439,7 @@
             const qrPngLink = document.createElement("a");
             qrPngLink.href = qrPng;
             qrPngLink.download = "qr.png";
-            qrPngLink.innerHTML = "Download QR Code";
+            qrPngLink.innerHTML = `Download QR Code https://plugins.whatsonchain.com/api/plugin/main/${data}`;
             document.getElementById("qrGeneration").appendChild(qrPngLink);
           })
           .catch((error) => {
