@@ -44,11 +44,11 @@ const encryptedData = (data, password) => {
   let encrypted = cipher.update(data, "utf8", "hex");
   encrypted += cipher.final("hex");
   const ivHex = iv.toString("hex"); // Convert IV to hex string for storage.
-  return { encrypted: ivHex + ":" + encrypted };
+  return `${ivHex}:${encrypted}`;
 };
 const decryptedData = (encrypted, password) => {
   const algorithm = "aes-256-cbc";
-  const key = crypto.scryptSync(password, "salt", 32);
+  const key = crypto.scryptSync(password, "salt", 32); // Generate key from password.
   const parts = encrypted.split(":"); // Split IV and encrypted data.
   const iv = Buffer.from(parts.shift(), "hex"); // Extract IV from data.
   const encryptedData = parts.join(":"); // Remaining parts are the encrypted data.
