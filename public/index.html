@@ -151,6 +151,8 @@
           <input placeholder="email address" type="email" id="emailRegister" />
           <input type="password" name="data" placeholder="Password" />
           <input type="password" name="data" placeholder="Repeat Password" />
+          <!-- referral code -->
+          <input type="text" name="data" placeholder="Referral Code" />
           <button type="submit">Register</button>
         </form>
         <p class="result" id="publishResult"></p>
@@ -275,6 +277,7 @@
           const lastName = document.getElementsByName("data")[1].value;
           const birthdate = document.getElementsByName("data")[2].value;
           const country = document.getElementsByName("data")[3].value;
+          let referralCode = document.getElementsByName("data")[6].value;
           const email = document.getElementById("emailRegister").value;
           password = document.getElementsByName("data")[4].value;
           const repeatPassword = document.getElementsByName("data")[5].value;
@@ -344,6 +347,7 @@
               birthdate: birthdate,
               country: country,
               email: email,
+              referralCode: referralCode,
               passwordHash: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,

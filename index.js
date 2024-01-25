@@ -255,6 +255,10 @@ app.post("/registerId", async (req, res) => {
       return;
     }
     busy = true;
+    let referralCode = "";
+    if (req.body.referralCode) {
+      referralCode = req.body.referralCode;
+    }
     let data = req.body.data;
     const encryptedMemberData = req.body.encryptedData;
     let firstName = req.body.firstName;
@@ -301,6 +305,7 @@ app.post("/registerId", async (req, res) => {
       publicKey,
       data,
       txid,
+      referralCode,
     };
     const encryptedMember = encryptedData(
       JSON.stringify(member),
@@ -317,6 +322,7 @@ app.post("/registerId", async (req, res) => {
       txid,
       address: memberAddress,
       publicKey,
+      referralCode,
     };
 
     addMember(newMemberObject);
