@@ -14,57 +14,30 @@
       body {
         font-family: sans-serif;
       }
-      h1 {
-        font-size: 1.5em;
-      }
-      label {
-        display: block;
-      }
-      input {
-        width: 100%;
-        max-width: 500px;
-      }
-      button {
-        margin-top: 10px;
-        padding: 5px 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        background-color: #eee;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #ddd;
-      }
-      pre {
-        background-color: #eee;
-        padding: 10px;
-        border-radius: 5px;
+      .main {
+        max-width: 600px;
+        margin: 0 auto;
+        word-wrap: break-word;
       }
       #scanner {
-        width: 100%;
-        max-width: 500px;
-        height: 500px;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-      }
-
-      @media (min-width: 500px) {
-        #scanner {
-          margin: 10px auto;
-        }
+        width: 300px;
+        height: 300px;
+        margin: 0 auto;
       }
     </style>
   </head>
   <body>
-    <h1>Transaction Explorer</h1>
-    <p>
-      <label for="txid">Transaction ID</label>
-      <input type="text" id="txid" />
-      <button id="load">Load</button>
-    </p>
-    <p id="txinfo"></p>
-    <p id="opreturn"></p>
-    <div id="scanner"></div>
+    <div class="main">
+      <h1>Transaction Explorer</h1>
+      <p>
+        <label for="txid">Transaction ID</label>
+        <input type="text" id="txid" />
+        <button id="load">Load</button>
+      </p>
+      <p id="txinfo"></p>
+      <p id="opreturn"></p>
+      <div id="scanner"></div>
+    </div>
     <script>
       //get txinfo from whatsonchain
       function getTxInfo(txid) {
