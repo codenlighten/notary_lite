@@ -153,8 +153,8 @@
       <div class="forms" id="verification">
         <h2>Verify OTP Code</h2>
         <form id="verifyOTPForm">
-          <input type="text" name="data" placeholder="OTP Code" />
-          <button type="submit">Verify</button>
+          <input id="otpCode" type="text" name="data" placeholder="OTP Code" />
+          <button id="otpSubmit" type="submit">Verify</button>
         </form>
         <p class="result" id="verifyOTPResult"></p>
       </div>
@@ -358,8 +358,8 @@
         .getElementById("loginForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const email = document.getElementsById("loginEmail").value;
-          password = document.getElementsById("loginPwd").value;
+          const email = document.getElementById("loginEmail").value;
+          password = document.getElementById("loginPwd").value;
           const passwordHash = bsv.crypto.Hash.sha256(
             Buffer.from(password)
           ).toString("hex");
