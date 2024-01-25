@@ -387,6 +387,7 @@ app.post("/login", async (req, res) => {
       email,
       txid,
       date: new Date(),
+      description: "login",
     };
     addTransaction(transactionObject);
     //generate token
@@ -464,6 +465,7 @@ app.post("/otpVerify", async (req, res) => {
         email,
         txid,
         date: new Date(),
+        description: "otpVerify",
       };
       addTransaction(transactionObject);
       const token = generateToken({ email });
