@@ -145,6 +145,14 @@
       <div id="keys">
         <h2>Keys</h2>
         <p>
+          <strong>Mnemonic:</strong>
+          <span id="mnemonic"></span>
+        </p>
+        <p>
+          <strong>Private Key:</strong>
+          <span id="privateKey"></span>
+        </p>
+        <p>
           <strong>Public Key:</strong>
           <span id="publicKey"></span>
         </p>
@@ -296,10 +304,6 @@
       ) {
         location.href = "/";
       }
-      document.getElementById("publicKey").innerHTML =
-        localStorage.getItem("publicKey");
-      document.getElementById("address").innerHTML =
-        localStorage.getItem("address");
       if (localStorage.getItem("registered") === "true") {
         document.getElementById("verified").innerHTML = "Yes";
       } else {
@@ -307,6 +311,37 @@
           "verified"
         ).innerHTML = `No. Please visit <a href="https://notaryhash.com/register" target="_blank">Notary Hash Register Page</a> to register your address.`;
       }
+      document.getElementById("publicKey").innerHTML =
+        localStorage.getItem("publicKey");
+      document.getElementById("address").innerHTML =
+        localStorage.getItem("address");
+      document.getElementById("privateKey").innerHTML = `**********`;
+      let private = false;
+      document.getElementById("mnemonic").innerHTML = `**********`;
+      document
+        .getElementById("privateKey")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          if (private) {
+            this.innerHTML = `**********`;
+            private = false;
+          } else {
+            this.innerHTML = localStorage.getItem("privateKey");
+            private = true;
+          }
+        });
+      document
+        .getElementById("mnemonic")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          if (private) {
+            this.innerHTML = `**********`;
+            private = false;
+          } else {
+            this.innerHTML = localStorage.getItem("mnemonic");
+            private = true;
+          }
+        });
 
       document
         .getElementById("publishForm")
