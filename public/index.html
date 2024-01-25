@@ -359,8 +359,10 @@
           const doubleHash = bsv.crypto.Hash.sha256(
             Buffer.from(passwordHash)
           ).toString("hex");
-          const hash = hashData(identity.data);
-          const signature = signData(identity.data);
+          // const data = `${email}${doubleHash}`;
+          // const hash = hashData(data.toLowerCase());
+          // const signature = signData(data.toLowerCase());
+
           sendData(
             "/login",
             {
