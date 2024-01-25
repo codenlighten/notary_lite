@@ -260,7 +260,7 @@
         );
       };
       //if not keys in local storage, create them
-      if (!localStorage.getItem("privateKey")) {
+      if (!localStorage.getItem("keys")) {
         const jsonString = generateKeys();
         const keys = JSON.parse(jsonString);
         const privateKey = bsv.PrivateKey.fromWIF(keys.privateKey);
