@@ -405,6 +405,7 @@
             document.getElementById("resultTxid").innerHTML = txStatus
               ? `<a href="https://whatsonchain.com/tx/${txid}" target="_blank">${txid}</a>`
               : data;
+            document.getElementById("resultTxid").style.display = "block";
             document.getElementById("message").innerHTML = message;
             document.getElementById("message").style.display = "block";
             if (registerStatus == "register") {
