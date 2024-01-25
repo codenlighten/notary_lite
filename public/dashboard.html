@@ -319,6 +319,7 @@
           sendData(
             "/publish",
             {
+              token: localStorage.getItem("token"),
               data: this.data.value,
               hash: hash.toString("hex"),
               signature: signature,
@@ -341,6 +342,7 @@
           sendData(
             "/hash",
             {
+              token: localStorage.getItem("token"),
               data: this.data.value,
               hash: hash.toString("hex"),
               signature: signature,
@@ -363,6 +365,7 @@
           sendData(
             "/sign",
             {
+              token: localStorage.getItem("token"),
               data: this.data.value,
               hash: hash.toString("hex"),
               signature: signature,
@@ -405,6 +408,7 @@
             sendData(
               "/publishFile",
               {
+                token: localStorage.getItem("token"),
                 data: reader.result.split(",")[1], // remove "data:application/pdf;base64," from the data url [1
                 mimeType: mimeType,
                 hash: hash.toString("hex"),
