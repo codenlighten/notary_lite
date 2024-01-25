@@ -511,8 +511,9 @@
         document.getElementById("verification").style.display = "none";
         document.getElementById("login").style.display = "block";
         clearInputs();
-        document.getElementsById("loginEmail").focus();
-        document.getElementsById("loginEmail").scrollIntoView();
+        //focus on email input
+        document.getElementById("login").scrollIntoView();
+        document.getElementById("loginEmail").focus();
       });
     </script>
   </body>
