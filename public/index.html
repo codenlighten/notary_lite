@@ -403,6 +403,7 @@
         })
           .then((response) => response.text())
           .then((data) => {
+            console.log("Success:", data);
             const json = JSON.parse(data);
             const txid = json.txid;
             const message = json.message;

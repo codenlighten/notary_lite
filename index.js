@@ -30,7 +30,7 @@ const { send2FACode } = require("./nodemail");
 const cryptoPassword = process.env.PASSWORD;
 const wif = process.env.FUNDING_WIF;
 const fundingAddress = process.env.FUNDING_ADDRESS;
-const monitorinAddress = process.env.MONITORING_ADDRESS;
+const monitoringAddress = process.env.MONITORING_ADDRESS;
 const registeredAddress = process.env.REGISTERED_ADDRESS;
 const privateKey = bsv.PrivateKey.fromWIF(wif);
 // const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
@@ -342,6 +342,7 @@ app.post("/login", async (req, res) => {
     }
     //check registered member
     const member = await getMemberByEmailAddress(email);
+    console.log(member);
     if (!member) {
       res.send({ message: "email not found" });
       busy = false;
@@ -364,7 +365,7 @@ app.post("/login", async (req, res) => {
       signature,
       address,
       hash,
-      monitorinAddress,
+      monitoringAddress,
       "login"
     );
     const transactionObject = {
@@ -441,7 +442,7 @@ app.post("/otpVerify", async (req, res) => {
         signature,
         address,
         hash,
-        monitorinAddress,
+        monitoringAddress,
         "otpVerify"
       );
       const transactionObject = {
@@ -490,7 +491,7 @@ app.post("/publish", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress,
+      monitoringAddress,
       "publish"
     );
     busy = false;
@@ -524,7 +525,7 @@ app.post("/publishFile", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress,
+      monitoringAddress,
       "publish"
     );
 
@@ -555,7 +556,7 @@ app.post("/hash", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress,
+      monitoringAddress,
       "hash"
     );
     if (!txid) {
@@ -585,7 +586,7 @@ app.post("/sign", async (req, res) => {
       result,
       address,
       hash,
-      monitorinAddress,
+      monitoringAddress,
       "sign"
     );
     res.send(txid);
@@ -621,10 +622,20 @@ app.post("/api/v1/postdata", async (req, res) => {
       sig,
       address,
       hash,
-      monitorinAddress,
+      monitoringAddress,
       "postdata"
     );
     res.send({ txid, hash, publicKey, keys });
+  } catch (e) {
+    console.log(e);
+    res.send("error");
+  }
+});
+
+app.get("/api/v1/members", async (req, res) => {
+  try {
+    const members = await getMembers();
+    res.send(members);
   } catch (e) {
     console.log(e);
     res.send("error");
