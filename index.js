@@ -475,7 +475,7 @@ app.post("/otpVerify", async (req, res) => {
         message: "success",
         txid,
         date: new Date(),
-        member: decrypted,
+        member: JSON.parse(decrypted),
       });
     }
   } catch (e) {
