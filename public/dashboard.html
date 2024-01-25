@@ -322,9 +322,13 @@
         if (!private) {
           document.getElementById("privateKey").innerHTML =
             localStorage.getItem("privateKey");
+          document.getElementById("mnemonic").innerHTML =
+            localStorage.getItem("mnemonic");
           private = true;
         } else {
           document.getElementById("privateKey").innerHTML = `**********`;
+          document.getElementById("mnemonic").innerHTML = `**********`;
+
           private = false;
         }
       });
@@ -332,9 +336,12 @@
         if (!private) {
           document.getElementById("mnemonic").innerHTML =
             localStorage.getItem("mnemonic");
+          document.getElementById("privateKey").innerHTML =
+            localStorage.getItem("privateKey");
           private = true;
         } else {
           document.getElementById("mnemonic").innerHTML = `**********`;
+          document.getElementById("privateKey").innerHTML = `**********`;
           private = false;
         }
       });
