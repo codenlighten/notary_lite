@@ -518,7 +518,7 @@
         const now = new Date();
         const diff = now - date;
         const hours = Math.floor(diff / 1000 / 60 / 60);
-        if (hours > 24) {
+        if (hours > 1) {
           //logout
           localStorage.clear();
           window.location.href = "/";
