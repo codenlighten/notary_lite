@@ -23,7 +23,7 @@ const getMemberByEmailAddress = async (email) => {
     await client.connect();
     const db = client.db("notaryhash");
     const collection = db.collection("members");
-    const result = await collection.findOne({ email: emailAddress });
+    const result = await collection.findOne({ email: email });
     console.log(result);
     return result;
   } catch (err) {
