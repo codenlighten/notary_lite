@@ -433,7 +433,7 @@
               const member = json.member;
               const token = json.token;
               const date = json.date;
-              const encryptedKeys = member.encryptedKeys;
+              const encryptedKeys = JSON.parse(member).encryptedKeys;
               console.log(encryptedKeys, member, token, date);
               const keys = decrypt(encryptedKeys, password);
               localStorage.setItem("member", JSON.stringify(member));
