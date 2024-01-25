@@ -495,6 +495,34 @@ app.post("/otpVerify", async (req, res) => {
   }
 });
 
+// get referral code on behalf of member to share
+app.post("/getReferralCode", async (req, res) => {
+  try {
+    if (busy) {
+      res.send("busy");
+      return;
+    }
+    busy = true;
+    const token = req.body.token;
+    //check token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const member = await getMemberByEmailAddress(email);
+    if (!member) {
+      res.send({ message: "email not found" });
+      busy = false;
+      return;
+    }
+    const referralCode = member.referralCode;
+    busy = false;
+    res.send({ referralCode });
+  } catch (e) {
+    busy = false;
+    console.log(e);
+    res.send("error");
+  }
+});
+
 // app.post to handle the data publish to blockchain
 app.post("/publish", async (req, res) => {
   try {
