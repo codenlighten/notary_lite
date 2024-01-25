@@ -443,6 +443,7 @@
               //store keys in local storage
               const { privateKey, publicKey, address, mnemonic, path } =
                 JSON.parse(keys);
+              localStorage.setItem("registered", true);
               localStorage.setItem("path", path);
               localStorage.setItem("privateKey", privateKey);
               localStorage.setItem("publicKey", publicKey);
