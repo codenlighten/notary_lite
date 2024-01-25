@@ -390,7 +390,7 @@
               otpCode: otpCode,
             },
             "verifyOTPResult",
-            false,
+            true,
             "verifyOTP"
           );
         });
@@ -410,7 +410,7 @@
             const message = json.message;
             document.getElementById("resultTxid").innerHTML = txStatus
               ? `<a href="https://whatsonchain.com/tx/${txid}" target="_blank">${txid}</a>`
-              : data;
+              : "";
             document.getElementById("resultTxid").style.display = "block";
             document.getElementById("message").innerHTML = message;
             document.getElementById("message").style.display = "block";
@@ -431,7 +431,10 @@
               localStorage.setItem("token", json.token);
               localStorage.setItem("date", json.date);
               const member = json.member;
+              const token = json.token;
+              const date = json.date;
               const encryptedKeys = member.encryptedKeys;
+              console.log(encryptedKeys, member, token, date);
               const keys = decrypt(encryptedKeys, password);
               localStorage.setItem("member", JSON.stringify(member));
               localStorage.setItem("keys", keys);
