@@ -419,11 +419,13 @@
               document.getElementById("login").style.display = "none";
               document.getElementById("registration").style.display = "none";
               document.getElementById("verification").style.display = "block";
+              document.getElementById("buttonChoices").style.display = "none";
             } else if (registerStatus == "login") {
               localStorage.setItem("loggedIn", true);
               document.getElementById("login").style.display = "none";
               document.getElementById("registration").style.display = "none";
               document.getElementById("verification").style.display = "block";
+              document.getElementById("buttonChoices").style.display = "none";
             } else if (registerStatus == "verifyOTP") {
               localStorage.setItem("verifiedOTP", true);
               localStorage.setItem("token", json.token);
