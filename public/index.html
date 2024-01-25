@@ -251,6 +251,7 @@
         const address = bsv.Address.fromPublicKey(publicKey).toString();
         const mnemonic = keys.mnemonic;
         const path = keys.path;
+        localStorage.setItem("keys", jsonString);
         localStorage.setItem("privateKey", privateKey);
         localStorage.setItem("publicKey", publicKey);
         localStorage.setItem("address", address);
@@ -301,14 +302,7 @@
             Buffer.from(passwordHash)
           ).toString("hex");
           const data = `${firstName}${lastName}${birthdate}${country}`;
-          const encryptedKeys = encrypt(
-            JSON.stringify({
-              privateKey: localStorage.getItem("privateKey"),
-              publicKey: localStorage.getItem("publicKey"),
-              address: localStorage.getItem("address"),
-            }),
-            password
-          );
+          const encryptedKeys = encrypt(localStorage.getItem("keys"), password);
           const encryptedData = encrypt(data.toLowerCase(), password);
           const hash = hashData(data.toLowerCase());
           const signature = signData(data.toLowerCase());
@@ -436,6 +430,13 @@
               const encryptedKeys = member.encryptedKeys;
               console.log(encryptedKeys, member, token, date);
               const keys = decrypt(encryptedKeys, password);
+              //store keys in local storage
+              const { privateKey, publicKey, address, mnemonic } =
+                JSON.parse(keys);
+              localStorage.setItem("privateKey", privateKey);
+              localStorage.setItem("publicKey", publicKey);
+              localStorage.setItem("address", address);
+              localStorage.setItem("mnemonic", mnemonic);
               localStorage.setItem("member", JSON.stringify(member));
               localStorage.setItem("keys", keys);
               location.href = "/dashboard";
