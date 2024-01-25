@@ -162,7 +162,12 @@
         <h2>Login</h2>
         <form id="loginForm">
           <input id="loginEmail" type="text" name="data" placeholder="Email" />
-          <input type="password" name="data" placeholder="Password" />
+          <input
+            id="loginPwd"
+            type="password"
+            name="data"
+            placeholder="Password"
+          />
           <button type="submit">Login</button>
         </form>
         <p class="result" id="verifyResult"></p>
@@ -353,18 +358,14 @@
         .getElementById("loginForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const email = document.getElementsByName("data")[0].value;
-          password = document.getElementsByName("data")[1].value;
+          const email = document.getElementsById("loginEmail").value;
+          password = document.getElementsById("loginPwd").value;
           const passwordHash = bsv.crypto.Hash.sha256(
             Buffer.from(password)
           ).toString("hex");
           const doubleHash = bsv.crypto.Hash.sha256(
             Buffer.from(passwordHash)
           ).toString("hex");
-          // const data = `${email}${doubleHash}`;
-          // const hash = hashData(data.toLowerCase());
-          // const signature = signData(data.toLowerCase());
-
           sendData(
             "/login",
             {
