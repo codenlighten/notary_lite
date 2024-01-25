@@ -44,7 +44,7 @@ const encryptedData = (data, password) => {
   let encrypted = cipher.update(data, "utf8", "hex");
   encrypted += cipher.final("hex");
   const ivHex = iv.toString("hex"); // Convert IV to hex string for storage.
-  return `${ivHex}:${encrypted}`; // Combine IV and encrypted data.
+  return { encrypted: ivHex + ":" + encrypted };
 };
 const decryptedData = (encrypted, password) => {
   const algorithm = "aes-256-cbc";
