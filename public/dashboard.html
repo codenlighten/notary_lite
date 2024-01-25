@@ -489,6 +489,24 @@
           localStorage.clear();
           window.location.href = "/";
         });
+
+      //check localStorage.date and token
+      if (localStorage.getItem("date") && localStorage.getItem("token")) {
+        //check if date is more than 24 hours
+        const date = new Date(localStorage.getItem("date"));
+        const now = new Date();
+        const diff = now - date;
+        const hours = Math.floor(diff / 1000 / 60 / 60);
+        if (hours > 24) {
+          //logout
+          localStorage.clear();
+          window.location.href = "/";
+        }
+      } else {
+        //logout
+        localStorage.clear();
+        window.location.href = "/";
+      }
     </script>
   </body>
 </html>
