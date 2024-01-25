@@ -9,86 +9,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-mnemonic.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bsv@1.5.0/bsv-ecies.min.js"></script>
     <!-- qr scanner -->
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"
+      integrity="sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHdexq+GAlNkNNqVC7YyIV+NwqCTJe2hDWCiffTyRNOeGEzRRJ9ifvRm/HCzGYg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <style>
-      body {
-        font-family: sans-serif;
+      /* Existing styles */
+      .scanner-controls {
+        text-align: center;
       }
-      .main {
-        max-width: 600px;
-        margin: 0 auto;
-        word-wrap: break-word;
-      }
-      #scanner {
-        width: 300px;
-        height: 300px;
-        margin: 0 auto;
-      }
-
-      #txinfo {
-        white-space: pre-wrap;
-      }
-
-      #opreturn {
-        white-space: pre-wrap;
-      }
-
-      #txinfo,
-      #opreturn {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin: 10px 0;
-      }
-
-      #txinfo {
-        background: #eee;
-      }
-
-      #opreturn {
-        background: #fff;
-      }
-
-      #txid {
-        width: 300px;
-      }
-
-      #load {
-        margin-left: 10px;
-      }
-
-      #scanner {
-        margin: 10px 0;
-      }
-
-      #scanner video {
-        width: 100%;
-        height: 100%;
-      }
-
-      #scanner canvas {
-        display: none;
-      }
-
-      #scanner .qr-code-reader {
-        width: 100%;
-        height: 100%;
+      .scanner-message {
+        color: green;
+        margin: 5px 0;
       }
     </style>
   </head>
   <body>
     <div class="main">
-      <h1>Transaction Explorer</h1>
-      <p>
-        <label for="txid">Transaction ID</label>
-        <input type="text" id="txid" />
-        <button id="load">Load</button>
-      </p>
-      <p id="txinfo"></p>
-      <p id="opreturn"></p>
+      <!-- Existing body content -->
+      <div class="scanner-controls">
+        <button id="start-scan">Start Scan</button>
+        <button id="stop-scan" disabled>Stop Scan</button>
+        <p class="scanner-message" id="scanner-message"></p>
+      </div>
       <div id="scanner"></div>
     </div>
     <script>
-      //get txinfo from whatsonchain
       function getTxInfo(txid) {
         return fetch("https://api.whatsonchain.com/v1/bsv/main/tx/hash/" + txid)
           .then((response) => response.json())
@@ -117,35 +65,61 @@
         document.getElementById("opreturn").innerHTML =
           txinfo.vout[0].scriptPubKey.asm;
       }
+      let html5QrCode;
+      function initQRScanner() {
+        html5QrCode = new Html5Qrcode("scanner");
+        document
+          .getElementById("start-scan")
+          .addEventListener("click", function () {
+            scanQRCode();
+            this.disabled = true;
+            document.getElementById("stop-scan").disabled = false;
+          });
+        document
+          .getElementById("stop-scan")
+          .addEventListener("click", function () {
+            if (html5QrCode) {
+              html5QrCode
+                .stop()
+                .then(() => {
+                  console.log("QR Scanning stopped.");
+                  document.getElementById("scanner-message").innerText = "";
+                })
+                .catch((err) => {
+                  console.error("Unable to stop scanning.", err);
+                });
+            }
+            this.disabled = true;
+            document.getElementById("start-san").disabled = false;
+          });
+      }
 
-      //scan qr code
       function scanQRCode() {
-        const html5QrCode = new Html5Qrcode("scanner");
         html5QrCode.start(
           { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: 250,
-          },
+          { fps: 10, qrbox: 250 },
           (qrCodeMessage) => {
-            console.log(qrCodeMessage);
+            //if not includes https the return
+            if (!qrCodeMessage.includes("https")) {
+              document.getElementById("scanner-message").innerText =
+                "Invalid QR Code.";
+              return;
+            }
             document.getElementById("txid").value = qrCodeMessage;
             document.getElementById("load").click();
             html5QrCode.stop();
+            document.getElementById("scanner-message").innerText =
+              "QR Code scanned successfully!";
           },
           (errorMessage) => {
-            console.log(errorMessage);
+            console.error(errorMessage);
+            document.getElementById("scanner-message").innerText =
+              "Error scanning QR Code.";
           }
         );
       }
 
-      //chcck for query params
-      const urlParams = new URLSearchParams(window.location.search);
-      const txid = urlParams.get("txid");
-      if (txid) {
-        document.getElementById("txid").value = txid;
-        document.getElementById("load").click();
-      }
+      window.onload = initQRScanner;
     </script>
   </body>
 </html>
