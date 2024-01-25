@@ -383,7 +383,7 @@
         .getElementById("verifyOTPForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const otp = document.getElementsByName("data")[0].value;
+          const otp = document.getElementById("otpCode").value;
           sendData(
             "/otpVerify",
             {
