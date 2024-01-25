@@ -319,9 +319,9 @@
           const doubleHash = bsv.crypto.Hash.sha256(
             Buffer.from(passwordHash)
           ).toString("hex");
-          const data = `${firstName}${lastName}${birthdate}${country}`;
+          const data = `${firstName.toLowerCase()}${lastName.toLowerCase()}${birthdate}${country.toLowerCase()}`;
           const encryptedKeys = encrypt(localStorage.getItem("keys"), password);
-          const encryptedData = encrypt(data.toLowerCase(), password);
+          const encryptedData = encrypt(data, password);
           const hash = hashData(data.toLowerCase());
           const signature = signData(data.toLowerCase());
           localStorage.setItem(
