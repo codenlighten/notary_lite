@@ -288,7 +288,12 @@
           publicKey
         );
       };
-      if (!localStorage.getItem("registered")) {
+      if (
+        !localStorage.getItem("registered") ||
+        localStorage.getItem("registered") === "false" ||
+        !localStorage.getItem("publicKey") ||
+        !localStorage.getItem("date")
+      ) {
         location.href = "/";
       }
       document.getElementById("publicKey").innerHTML =
