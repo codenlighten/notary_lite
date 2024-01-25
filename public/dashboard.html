@@ -97,7 +97,15 @@
     button:hover {
       background-color: #77471c; /* Primary color for buttons */
     }
-
+    #logout {
+      text-align: center;
+    }
+    #logoutButton {
+      background-color: #956134; /* Primary color for buttons */
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
     @media (max-width: 600px) {
       .mainContainer {
         padding: 10px;
@@ -166,6 +174,10 @@
         <button type="submit">Verify</button>
       </form>
       <p class="result" id="verifyResult"></p>
+      <!-- logout -->
+      <div id="logout">
+        <button id="logoutButton">Logout</button>
+      </div>
       <!-- copyright 2024 NotaryHash and SmartLedger -->
       <p>&copy; 2024 NotaryHash and SmartLedger. All rights reserved.</p>
     </div>
@@ -445,6 +457,14 @@
       };
 
       //   sendFunds("1AGFr8YeV4AmCVQrkfZYfHw77KrK6XNfVK", 100000);
+
+      document
+        .getElementById("logoutButton")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          localStorage.clear();
+          window.location.href = "/";
+        });
     </script>
   </body>
 </html>

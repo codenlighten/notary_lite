@@ -100,6 +100,11 @@
     #message p {
       margin: 0;
     }
+    #logout {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
 
     @media (max-width: 600px) {
       .mainContainer {
@@ -171,6 +176,10 @@
           <button type="submit">Login</button>
         </form>
         <p class="result" id="verifyResult"></p>
+      </div>
+      <!-- logout -->
+      <div id="logout">
+        <button id="logoutButton">Logout</button>
       </div>
       <!-- copyright 2024 NotaryHash and SmartLedger -->
       <p>&copy; 2024 NotaryHash and SmartLedger. All rights reserved.</p>
@@ -408,6 +417,7 @@
             document.getElementById("resultTxid").style.display = "block";
             document.getElementById("message").innerHTML = message;
             document.getElementById("message").style.display = "block";
+            document.getElementById("logout").style.display = "block";
             if (registerStatus == "register") {
               localStorage.setItem("registered", true);
               document.getElementById("login").style.display = "none";
@@ -523,6 +533,10 @@
         //focus on email input
         document.getElementById("login").scrollIntoView();
         document.getElementById("loginEmail").focus();
+      });
+      document.getElementById("logoutButton").addEventListener("click", () => {
+        localStorage.clear();
+        location.href = "/";
       });
     </script>
   </body>
