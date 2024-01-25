@@ -32,7 +32,14 @@
   </head>
   <body>
     <div class="main">
-      <!-- Existing body content -->
+      <h1>Transaction Explorer</h1>
+      <p>
+        <label for="txid">Transaction ID</label>
+        <input type="text" id="txid" />
+        <button id="load">Load</button>
+      </p>
+      <p id="txinfo"></p>
+      <p id="opreturn"></p>
       <div class="scanner-controls">
         <button id="start-scan">Start Scan</button>
         <button id="stop-scan" disabled>Stop Scan</button>
@@ -106,15 +113,10 @@
             //if not includes https the return
             if (!qrCodeMessage.includes("https")) {
               document.getElementById("scanner-message").innerText =
-                "Invalid QR Code.";
+                "Invalid QR Code. Continue Scanning.";
               return;
             }
             location.href = qrCodeMessage;
-            // document.getElementById("txid").value = qrCodeMessage;
-            // document.getElementById("load").click();
-            // html5QrCode.stop();
-            // document.getElementById("scanner-message").innerText =
-            //   "QR Code scanned successfully!";
           },
           (errorMessage) => {
             console.error(errorMessage);
