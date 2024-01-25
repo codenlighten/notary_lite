@@ -112,10 +112,19 @@
       text-align: center;
       display: none;
     }
-    #qr {
-      width: 200px;
-      height: 200px;
+    #qrGeneration canvas {
+      display: block;
       margin: 0 auto;
+    }
+    #qrGeneration a {
+      display: block;
+      margin: 0 auto;
+      width: 200px;
+      text-align: center;
+    }
+    #qrGeneration a:hover {
+      background-color: #956134; /* Primary color for buttons */
+      color: white;
     }
     @media (max-width: 600px) {
       .mainContainer {
@@ -240,7 +249,7 @@
         return plaintext;
       };
 
-      //display qr code
+      //display qr code high resolution
       const displayQRCode = (data) => {
         const qr = new QRious({
           element: document.getElementById("qr"),
