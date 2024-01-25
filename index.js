@@ -90,6 +90,19 @@ const removeOTP = (otpCode, email) => {
     (otp) => otp.otpCode !== otpCode && otp.email !== email
   );
 };
+//remove otp after 5 minutes
+setInterval(() => {
+  const now = new Date();
+  otpCodes = otpCodes.filter((otp) => {
+    const date = new Date(otp.date);
+    const diff = now - date;
+    if (diff > 300000) {
+      return false;
+    } else {
+      return true;
+    }
+  });
+}, 300000);
 
 let busy = false;
 const getUtxos = async () => {
