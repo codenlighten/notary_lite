@@ -109,11 +109,12 @@
                 "Invalid QR Code.";
               return;
             }
-            document.getElementById("txid").value = qrCodeMessage;
-            document.getElementById("load").click();
-            html5QrCode.stop();
-            document.getElementById("scanner-message").innerText =
-              "QR Code scanned successfully!";
+            location.href = qrCodeMessage;
+            // document.getElementById("txid").value = qrCodeMessage;
+            // document.getElementById("load").click();
+            // html5QrCode.stop();
+            // document.getElementById("scanner-message").innerText =
+            //   "QR Code scanned successfully!";
           },
           (errorMessage) => {
             console.error(errorMessage);
