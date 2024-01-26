@@ -309,13 +309,15 @@
             return;
           }
           const passwordHash = bsv.crypto.Hash.sha256(
-            Buffer.from(password)
+            Buffer.from(password.trim())
           ).toString("hex");
 
           const doubleHash = bsv.crypto.Hash.sha256(
             Buffer.from(passwordHash)
           ).toString("hex");
-          const data = `${firstName.toLowerCase()}${lastName.toLowerCase()}${birthdate}${country.toLowerCase()}`;
+          const data = `${firstName.toLowerCase()}${lastName.toLowerCase()}${birthdate}${country
+            .toLowerCase()
+            .trim()}`;
           const encryptedKeys = encrypt(localStorage.getItem("keys"), password);
           const encryptedData = encrypt(data, password);
           const hash = hashData(data.toLowerCase());
@@ -326,11 +328,11 @@
               data: data.toLowerCase(),
               encryptedData: encryptedData,
               encryptedKeys: encryptedKeys,
-              firstName: firstName.toLowerCase(),
-              lastName: lastName.toLowerCase(),
+              firstName: firstName.toLowerCase().trim(),
+              lastName: lastName.toLowerCase().trim(),
               birthdate: birthdate,
-              country: country.toLowerCase(),
-              email: email.toLowerCase(),
+              country: country.toLowerCase().trim(),
+              email: email.toLowerCase().trim(),
               password: doubleHash,
               hash: hash.toString("hex"),
               signature: signature,
@@ -344,11 +346,11 @@
               data: data,
               encryptedData: encryptedData,
               encryptedKeys: encryptedKeys,
-              firstName: firstName,
-              lastName: lastName,
+              firstName: firstName.toLowerCase().trim(),
+              lastName: lastName.toLowerCase().trim(),
               birthdate: birthdate,
-              country: country,
-              email: email.toLowerCase(),
+              country: country.toLowerCase().trim(),
+              email: email.toLowerCase().trim(),
               referralCode: referralCode,
               passwordHash: doubleHash,
               hash: hash.toString("hex"),
@@ -370,7 +372,7 @@
           const email = document.getElementById("loginEmail").value;
           password = document.getElementById("loginPwd").value;
           const passwordHash = bsv.crypto.Hash.sha256(
-            Buffer.from(password)
+            Buffer.from(password.trim())
           ).toString("hex");
           const doubleHash = bsv.crypto.Hash.sha256(
             Buffer.from(passwordHash)
@@ -379,7 +381,7 @@
             "/login",
             {
               passwordHash: doubleHash,
-              email: email.toLowerCase(),
+              email: email.toLowerCase().trim(),
             },
             "verifyResult",
             true,
@@ -396,7 +398,7 @@
           sendData(
             "/otpVerify",
             {
-              otpCode: otpCode,
+              otpCode: otpCode.trim(),
             },
             "verifyOTPResult",
             true,
