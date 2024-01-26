@@ -668,7 +668,7 @@ app.post("/api/v1/postdata", async (req, res) => {
     const address = keys.address;
     const publicKey = keys.publicKey;
     const sig = signData(data, keys.privateKey);
-    const result = verifyData(data, sig, address);
+    const result = verifyData(data, sig, publicKey);
     console.log(result);
     const txid = await publishOpReturn(
       "text/plain",
