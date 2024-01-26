@@ -305,15 +305,10 @@
                   });
                 }
               }
-            } else {
-              document.getElementById("scanner-message").innerText =
-                "Invalid QR Code. Continue Scanning.";
             }
           },
           (errorMessage) => {
-            console.error(errorMessage);
-            document.getElementById("scanner-message").innerText =
-              "Error scanning QR Code.";
+            // parse error, ignore it.
           }
         );
       }
