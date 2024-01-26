@@ -524,6 +524,7 @@
           e.preventDefault();
           const file = this.file.files[0];
           const mimeType = file.type;
+          console.log(mimeType);
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onload = () => {

@@ -562,7 +562,7 @@ app.post("/publish", async (req, res) => {
       "text/plain",
       data,
       sig,
-      address,
+      publicKey,
       hash,
       monitoringAddress,
       "publish"
@@ -596,7 +596,7 @@ app.post("/publishFile", async (req, res) => {
       mimeType,
       data,
       sig,
-      address,
+      publicKey,
       hash,
       monitoringAddress,
       "publish"
@@ -621,13 +621,14 @@ app.post("/hash", async (req, res) => {
   const data = req.body.data;
   const sig = req.body.signature;
   const address = req.body.address;
+  const publicKey = req.body.publicKey;
   const hash = hashData(data);
   try {
     const txid = await publishOpReturn(
       "text/plain",
       data,
       sig,
-      address,
+      publicKey,
       hash,
       monitoringAddress,
       "hash"

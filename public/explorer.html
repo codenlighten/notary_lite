@@ -108,6 +108,52 @@
         width: 100%;
         height: 100%;
       }
+      #scanner video {
+        width: 100%;
+        height: 100%;
+      }
+      #scanner canvas {
+        display: none;
+      }
+      .main {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .main h1 {
+        text-align: center;
+      }
+      .main p {
+        text-align: center;
+      }
+      .main img {
+        max-width: 100%;
+      }
+      .main #opreturn {
+        text-align: center;
+      }
+      .main #opreturn img {
+        max-width: 100%;
+      }
+      .main #opreturn embed {
+        max-width: 100%;
+        height: 100%;
+      }
+      .main #opreturn p {
+        text-align: center;
+      }
+      .main #opreturn p img {
+        max-width: 100%;
+      }
+      .main #opreturn p embed {
+        max-width: 100%;
+        height: 100%;
+      }
+      .main #opreturn p p {
+        text-align: center;
+      }
+      .main #opreturn p p img {
+        max-width: 100%;
+      }
     </style>
   </head>
   <body>
@@ -120,6 +166,8 @@
       </p>
       <p id="txinfo"></p>
       <p id="opreturn"></p>
+      <img id="outputImage" />
+      <div id="opreturn"></div>
       <div class="scanner-controls">
         <button id="start-scan">Start Scan</button>
         <button id="stop-scan" disabled>Stop Scan</button>
@@ -128,34 +176,87 @@
       <div id="scanner"></div>
     </div>
     <script>
+      //check for op_return and return op_return if true
+      const Buffer = bsv.deps.Buffer;
       function getTxInfo(txid) {
-        return fetch("https://api.whatsonchain.com/v1/bsv/main/tx/hash/" + txid)
-          .then((response) => response.json())
+        return fetch(`https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`)
+          .then((response) => response.text())
           .then((data) => {
-            return data;
+            //add hex to bsv.Transaction
+            const tx = new bsv.Transaction(data);
+            return tx;
           });
       }
-      //   display txinfo
-      function displayTxInfo(txinfo) {
-        document.getElementById("txinfo").innerHTML = JSON.stringify(
-          txinfo,
-          null,
-          2
-        );
-      }
-      //   check for op_return
-      function checkOpReturn(txinfo) {
-        if (txinfo.vout[0].scriptPubKey.type === "nulldata") {
-          return true;
-        } else {
-          return false;
-        }
+
+      //convert hex to ascii
+      function hex2a(hex) {
+        // var hex = hexx.toString(); //force conversion
+        var str = "";
+        for (var i = 0; i < hex.length && hex.substr(i, 2) !== "00"; i += 2)
+          str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+        return str;
       }
       //display op_return
       function displayOpReturn(txinfo) {
-        document.getElementById("opreturn").innerHTML =
-          txinfo.vout[0].scriptPubKey.asm;
+        let op_return = txinfo.outputs[0].script.toASM();
+        const op_return_split = op_return.split(" ");
+        //remove first element
+        op_return_split.shift();
+        console.log(op_return_split);
+        if (op_return_split[0] == "OP_RETURN") {
+          let appId_hex = op_return_split[1];
+          let appId_ascii = hex2a(appId_hex);
+          let op_return_hex = op_return_split[2];
+          const op_return_buffer = Buffer.from(op_return_hex, "hex");
+          const base64 = op_return_buffer.toString("base64");
+          let mimeType_hex = op_return_split[3];
+          let mimeType_ascii = hex2a(mimeType_hex);
+          console.log(appId_ascii, mimeType_ascii, op_return_hex);
+          //create element based on mimeType
+          let element = "";
+          if (mimeType_ascii == "text/plain") {
+            element = document.createElement("p");
+          } else if (mimeType_ascii == "image/png") {
+            element = document.createElement("img");
+            element.setAttribute("src", "data:image/png;base64," + base64);
+          } else if (mimeType_ascii == "image/jpeg") {
+            element = document.createElement("img");
+            element.setAttribute("src", "data:image/jpeg;base64," + base64);
+          } else if (mimeType_ascii == "image/gif") {
+            element = document.createElement("img");
+            element.setAttribute("src", "data:image/gif;base64," + base64);
+          } else if (mimeType_ascii == "application/pdf") {
+            element = document.createElement("embed");
+            element.setAttribute(
+              "src",
+              "data:application/pdf;base64," + base64
+            );
+          } else if (mimeType_ascii == "application/json") {
+            element = document.createElement("p");
+            element.innerText = hex2a(op_return_hex);
+          }
+          document.getElementById("opreturn").appendChild(element);
+        }
       }
+
+      function hexToBinary(hexString) {
+        const byteArray = new Uint8Array(hexString.length / 2);
+        for (let i = 0; i < hexString.length; i += 2) {
+          byteArray[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+        }
+        return byteArray;
+      }
+
+      function hexToString(hexString) {
+        var string = "";
+        for (var i = 0; i < hexString.length; i += 2) {
+          string += String.fromCharCode(
+            parseInt(hexString.substring(i, i + 2), 16)
+          );
+        }
+        return string;
+      }
+
       let html5QrCode;
       function initQRScanner() {
         html5QrCode = new Html5Qrcode("scanner");
@@ -207,6 +308,14 @@
       }
 
       window.onload = initQRScanner;
+
+      document.getElementById("load").addEventListener("click", function () {
+        let txid = document.getElementById("txid").value;
+        getTxInfo(txid).then((txinfo) => {
+          // displayTxInfo(txinfo);
+          displayOpReturn(txinfo);
+        });
+      });
     </script>
   </body>
 </html>
