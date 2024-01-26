@@ -354,8 +354,8 @@
 
         return signature.toString();
       };
-      const verifyData = (data, sig, address) => {
-        const publicKey = new bsv.PublicKey(address);
+      const verifyData = (data, sig, pubKey) => {
+        const publicKey = bsv.PublicKey.fromString(pubKey);
         const signature = new bsv.crypto.Signature(sig);
         return bsv.crypto.ECDSA.verify(
           Buffer.from(hashData(data)),
