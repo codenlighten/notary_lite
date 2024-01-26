@@ -234,9 +234,9 @@ const signData = (data, wifString) => {
   return sig;
 };
 
-const verifyData = (data, sig, address) => {
+const verifyData = (data, sig, publicKey) => {
+  const pubKey = bsv.PublicKey.fromString(publicKey);
   const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
-  const pubKey = bsv.PublicKey.fromAddress(address);
   const res = bsv.crypto.ECDSA.verify(hash, sig, pubKey);
   return res;
 };
@@ -637,11 +637,11 @@ app.post("/sign", async (req, res) => {
     const txid = await publishOpReturn(
       "text/plain",
       data,
-      result,
-      address,
+      sig,
+      publicKey,
       hash,
       monitoringAddress,
-      "sign"
+      result
     );
     res.send(txid);
   } catch (e) {
@@ -654,8 +654,8 @@ app.post("/sign", async (req, res) => {
 app.post("/verify", (req, res) => {
   const data = req.body.data;
   const sig = req.body.sig;
-  const address = req.body.address;
-  const result = verifyData(data, sig, address);
+  const publicKey = req.body.publicKey;
+  const result = verifyData(data, sig, publicKey);
   res.send(result);
 });
 

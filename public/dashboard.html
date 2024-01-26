@@ -272,7 +272,7 @@
       <form id="verifyForm">
         <input type="text" name="data" placeholder="Enter data" />
         <input type="text" name="sig" placeholder="Enter signature" />
-        <input type="text" name="address" placeholder="Enter address" />
+        <input type="text" name="publicKey" placeholder="Enter publicKey" />
         <button type="submit">Verify</button>
       </form>
       <p class="result" id="verifyResult"></p>
@@ -491,7 +491,7 @@
             {
               data: this.data.value,
               sig: this.sig.value,
-              address: this.address.value,
+              publicKey: this.publicKey.value,
             },
             "verifyResult"
           );
