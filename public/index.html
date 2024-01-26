@@ -174,13 +174,9 @@
       <div class="forms" id="login">
         <h2>Login</h2>
         <form id="loginForm">
-          <input id="loginEmail" type="text" name="data" placeholder="Email" />
-          <input
-            id="loginPwd"
-            type="password"
-            name="data"
-            placeholder="Password"
-          />
+          <!-- email -->
+          <input placeholder="email address" type="email" id="loginEmail" />
+          <input type="password" id="loginPwd" placeholder="Password" />
           <button type="submit">Login</button>
         </form>
         <p class="result" id="verifyResult"></p>
@@ -383,7 +379,7 @@
             "/login",
             {
               passwordHash: doubleHash,
-              email: email,
+              email: email.toLowerCase(),
             },
             "verifyResult",
             true,
