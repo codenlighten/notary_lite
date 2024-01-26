@@ -255,6 +255,17 @@
             element = document.createElement("p");
             element.innerText = hex2a(op_return_hex);
           }
+          element.style.border = "1px solid #ccc";
+          //width 100%
+          element.style.width = "100%";
+          //display block
+          element.style.display = "block";
+          //margin 0 auto
+          element.style.margin = "0 auto";
+          //padding 10px
+          element.style.padding = "10px";
+          //height 70vh
+          element.style.height = "70vh";
           document.getElementById("opreturn").appendChild(element);
         }
       }
