@@ -355,6 +355,15 @@
           displayOpReturn(txinfo);
         });
       });
+
+      //url params
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const txid = urlParams.get("txid");
+      if (txid) {
+        document.getElementById("txid").value = txid;
+        document.getElementById("load").click();
+      }
     </script>
   </body>
 </html>
