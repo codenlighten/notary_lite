@@ -292,12 +292,21 @@
           { fps: 10, qrbox: 250 },
           (qrCodeMessage) => {
             //if not includes https the return
-            if (!qrCodeMessage.includes("https")) {
+            if (qrCodeMessage.includes("https")) {
+              let txid = qrCodeMessage.split("/").pop();
+              if (txid.length == 64) {
+                getTxInfo(txid).then((txinfo) => {
+                  displayOpReturn(txinfo);
+                });
+                if (!confirm("Open link?")) {
+                  return;
+                }
+                location.href = qrCodeMessage;
+              }
+            } else {
               document.getElementById("scanner-message").innerText =
                 "Invalid QR Code. Continue Scanning.";
-              return;
             }
-            location.href = qrCodeMessage;
           },
           (errorMessage) => {
             console.error(errorMessage);
