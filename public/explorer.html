@@ -322,11 +322,8 @@
                 getTxInfo(txid).then((txinfo) => {
                   displayOpReturn(txinfo);
                 });
-                if (confirm("Do you want to load this transaction?")) {
-                  document.getElementById("txid").value = txid;
-                  getTxInfo(txid).then((txinfo) => {
-                    displayOpReturn(txinfo);
-                  });
+                if (confirm("Do you want to check blockchain?")) {
+                  window.open(qrCodeMessage, "_blank");
                 }
               }
             }
@@ -341,8 +338,20 @@
 
       document.getElementById("load").addEventListener("click", function () {
         let txid = document.getElementById("txid").value;
+        document.getElementById("opreturn").innerHTML = "";
+        // close scanner
+        if (html5QrCode) {
+          html5QrCode
+            .stop()
+            .then(() => {
+              console.log("QR Scanning stopped.");
+              document.getElementById("scanner-message").innerText = "";
+            })
+            .catch((err) => {
+              console.error("Unable to stop scanning.", err);
+            });
+        }
         getTxInfo(txid).then((txinfo) => {
-          // displayTxInfo(txinfo);
           displayOpReturn(txinfo);
         });
       });
