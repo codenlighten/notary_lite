@@ -356,12 +356,17 @@
       };
       const verifyData = (data, sig, publicKeyString) => {
         try {
-          // Use fromHex() instead of fromString() for a hex public key
-          const publicKey = bsv.PublicKey.fromHex(publicKeyString);
-          const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
-          const sigObject = bsv.crypto.Signature.fromString(sig);
-          const result = bsv.crypto.ECDSA.verify(hash, sigObject, publicKey);
-          return result;
+          //der format public key
+          const publicKey = bsv.PublicKey.fromString(publicKeyString);
+          // Use the hash buffer directly
+          const hashBuffer = hashData(data);
+          const signature = bsv.crypto.Signature.fromString(sig);
+          const verified = bsv.crypto.ECDSA.verify(
+            hashBuffer,
+            signature,
+            publicKey
+          );
+          return verified;
         } catch (error) {
           console.error("Error in verifyData:", error.message);
           return false;
