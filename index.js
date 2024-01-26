@@ -235,11 +235,17 @@ const signData = (data, wifString) => {
 };
 
 const verifyData = (data, sig, publicKeyString) => {
-  const publicKey = bsv.PublicKey.fromString(publicKeyString);
-  const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
-  const sigObject = bsv.crypto.Signature.fromString(sig);
-  const result = bsv.crypto.ECDSA.verify(hash, sigObject, publicKey);
-  return result;
+  try {
+    // Use fromHex() instead of fromString() for a hex public key
+    const publicKey = bsv.PublicKey.fromHex(publicKeyString);
+    const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
+    const sigObject = bsv.crypto.Signature.fromString(sig);
+    const result = bsv.crypto.ECDSA.verify(hash, sigObject, publicKey);
+    return result;
+  } catch (error) {
+    console.error("Error in verifyData:", error.message);
+    return false;
+  }
 };
 
 app.get("/", (req, res) => {

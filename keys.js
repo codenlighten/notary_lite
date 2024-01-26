@@ -30,7 +30,7 @@ const generateKeys = (path = defaultPath) => {
   };
 };
 
-generateKeys();
+// generateKeys();
 
 module.exports = {
   generateKeys,
