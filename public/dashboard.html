@@ -372,6 +372,17 @@
           return false;
         }
       };
+      //TEST signing and verifying
+      const testSign = () => {
+        const data = "Hello World";
+        const signature = signData(data);
+        console.log("signature:", signature);
+        const publicKey = localStorage.getItem("publicKey");
+        console.log("publicKey:", publicKey);
+        const verified = verifyData(data, signature, publicKey);
+        console.log("verified:", verified);
+      };
+      testSign();
 
       if (
         !localStorage.getItem("registered") ||

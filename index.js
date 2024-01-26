@@ -248,6 +248,18 @@ const verifyData = (data, sig, publicKeyString) => {
   }
 };
 
+//test sign and verify
+// const data = "hello world";
+// const sig = signData(data, wif);
+// const publicKey = bsv.PublicKey.fromPrivateKey(privateKey);
+// const publicKeyString = publicKey.toString();
+// const result = verifyData(
+//   "Hello World",
+//   "3045022100885e7110cd93e468b2bc1239c85bd757ac23eb3aff9416f9f8c1a64f0c13774202207a10c1c3f178e8ba3a759f283817f753a1c4b8c3444a09b90bc7dc06ced449b0",
+//   "0363d9e7cdf7aa3a5288240940443e7b8ca7a92bd6c155eef1fafa18afae2af6a7"
+// );
+// console.log(result);
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });

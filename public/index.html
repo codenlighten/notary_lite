@@ -335,15 +335,25 @@
 
         return signature.toString();
       };
-      const verifyData = (data, sig, address) => {
-        const publicKey = new bsv.PublicKey(address);
-        const signature = new bsv.crypto.Signature(sig);
-        return bsv.crypto.ECDSA.verify(
-          Buffer.from(hashData(data)),
-          signature,
-          publicKey
-        );
+      const verifyData = (data, sig, publicKeyString) => {
+        try {
+          //der format public key
+          const publicKey = bsv.PublicKey.fromString(publicKeyString);
+          // Use the hash buffer directly
+          const hashBuffer = hashData(data);
+          const signature = bsv.crypto.Signature.fromString(sig);
+          const verified = bsv.crypto.ECDSA.verify(
+            hashBuffer,
+            signature,
+            publicKey
+          );
+          return verified;
+        } catch (error) {
+          console.error("Error in verifyData:", error.message);
+          return false;
+        }
       };
+
       //if not keys in local storage, create them
       if (!localStorage.getItem("keys")) {
         const jsonString = generateKeys();
