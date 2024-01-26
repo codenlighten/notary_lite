@@ -373,16 +373,16 @@
         }
       };
       //TEST signing and verifying
-      const testSign = () => {
-        const data = "Hello World";
-        const signature = signData(data);
-        console.log("signature:", signature);
-        const publicKey = localStorage.getItem("publicKey");
-        console.log("publicKey:", publicKey);
-        const verified = verifyData(data, signature, publicKey);
-        console.log("verified:", verified);
-      };
-      testSign();
+      // const testSign = () => {
+      //   const data = "Hello World";
+      //   const signature = signData(data);
+      //   console.log("signature:", signature);
+      //   const publicKey = localStorage.getItem("publicKey");
+      //   console.log("publicKey:", publicKey);
+      //   const verified = verifyData(data, signature, publicKey);
+      //   console.log("verified:", verified);
+      // };
+      // testSign();
 
       if (
         !localStorage.getItem("registered") ||
@@ -567,15 +567,27 @@
             displayQRCode(
               `https://plugins.whatsonchain.com/api/plugin/main/${data}`
             );
-            // add download link for qr code png
+            // add download button for qr code png
             const qr = document.getElementById("qr");
             //remove previous download link
             const qrPng = qr.toDataURL("image/png");
-            const qrPngLink = document.createElement("a");
-            qrPngLink.href = qrPng;
-            qrPngLink.download = "qr.png";
-            qrPngLink.innerHTML = `Download QR Code https://plugins.whatsonchain.com/api/plugin/main/${data}`;
-            document.getElementById("qrGeneration").appendChild(qrPngLink);
+            const innerHTML = `Download QR Code https://plugins.whatsonchain.com/api/plugin/main/${data}`;
+            const button = document.createElement("button");
+            button.innerHTML = innerHTML;
+            button.addEventListener("click", function (e) {
+              e.preventDefault();
+              const a = document.createElement("a");
+              a.href = qrPng;
+              a.download = "qr.png";
+              a.click();
+            });
+            document.getElementById("qrGeneration").appendChild(button);
+            // add a href link to div qrGeneration to open url in new tab
+            const a = document.createElement("a");
+            a.href = `https://plugins.whatsonchain.com/api/plugin/main/${data}`;
+            a.target = "_blank";
+            a.innerHTML = `https://plugins.whatsonchain.com/api/plugin/main/${data}`;
+            document.getElementById("qrGeneration").appendChild(a);
           })
           .catch((error) => {
             console.error("Error:", error);
