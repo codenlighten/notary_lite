@@ -298,10 +298,12 @@
                 getTxInfo(txid).then((txinfo) => {
                   displayOpReturn(txinfo);
                 });
-                if (!confirm("Open link?")) {
-                  return;
+                if (confirm("Do you want to load this transaction?")) {
+                  document.getElementById("txid").value = txid;
+                  getTxInfo(txid).then((txinfo) => {
+                    displayOpReturn(txinfo);
+                  });
                 }
-                location.href = qrCodeMessage;
               }
             } else {
               document.getElementById("scanner-message").innerText =
