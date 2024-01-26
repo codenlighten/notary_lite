@@ -354,14 +354,12 @@
 
         return signature.toString();
       };
-      const verifyData = (data, sig, pubKey) => {
-        const publicKey = bsv.PublicKey.fromString(pubKey);
-        const signature = new bsv.crypto.Signature(sig);
-        return bsv.crypto.ECDSA.verify(
-          Buffer.from(hashData(data)),
-          signature,
-          publicKey
-        );
+      const verifyData = (data, sig, publicKeyString) => {
+        const publicKey = bsv.PublicKey.fromString(publicKeyString);
+        const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
+        const sigObject = bsv.crypto.Signature.fromString(sig);
+        const result = bsv.crypto.ECDSA.verify(hash, sigObject, publicKey);
+        return result;
       };
       if (
         !localStorage.getItem("registered") ||

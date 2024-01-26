@@ -234,11 +234,12 @@ const signData = (data, wifString) => {
   return sig;
 };
 
-const verifyData = (data, sig, publicKey) => {
-  const pubKey = bsv.PublicKey.fromString(publicKey);
+const verifyData = (data, sig, publicKeyString) => {
+  const publicKey = bsv.PublicKey.fromString(publicKeyString);
   const hash = bsv.crypto.Hash.sha256(Buffer.from(data));
-  const res = bsv.crypto.ECDSA.verify(hash, sig, pubKey);
-  return res;
+  const sigObject = bsv.crypto.Signature.fromString(sig);
+  const result = bsv.crypto.ECDSA.verify(hash, sigObject, publicKey);
+  return result;
 };
 
 app.get("/", (req, res) => {
@@ -674,7 +675,7 @@ app.post("/api/v1/postdata", async (req, res) => {
       "text/plain",
       data,
       sig,
-      address,
+      publicKey,
       hash,
       monitoringAddress,
       "postdata"
