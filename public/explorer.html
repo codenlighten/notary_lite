@@ -376,13 +376,14 @@
         }
         return string;
       }
-
+      let found = false;
       let html5QrCode;
       function initQRScanner() {
         html5QrCode = new Html5Qrcode("scanner");
         document
           .getElementById("start-scan")
           .addEventListener("click", function () {
+            found = false;
             // close the previous instance of Html5QrcodeScanner
             document.getElementById("opreturn").innerHTML = "";
             document.getElementById("scanner-message").innerText =
@@ -398,6 +399,7 @@
               html5QrCode
                 .stop()
                 .then(() => {
+                  found = false;
                   console.log("QR Scanning stopped.");
                   document.getElementById("scanner-message").innerText = "";
                 })
@@ -409,12 +411,14 @@
             document.getElementById("start-san").disabled = false;
           });
       }
-
       function scanQRCode() {
         html5QrCode.start(
           { facingMode: "environment" },
           { fps: 10, qrbox: 250 },
           (qrCodeMessage) => {
+            if (found) {
+              return;
+            }
             //if not includes https the return
             if (qrCodeMessage.includes("https")) {
               let txid = qrCodeMessage.split("/").pop();
@@ -422,9 +426,7 @@
                 getTxInfo(txid).then((txinfo) => {
                   displayOpReturn(txinfo);
                 });
-                // if (confirm("Do you want to check blockchain?")) {
-                //   window.open(qrCodeMessage, "_blank");
-                // }
+                found = true;
               }
             }
           },
@@ -439,6 +441,7 @@
       document.getElementById("load").addEventListener("click", function () {
         let txid = document.getElementById("txid").value;
         document.getElementById("opreturn").innerHTML = "";
+        found = false;
         // close scanner
         if (html5QrCode) {
           html5QrCode
