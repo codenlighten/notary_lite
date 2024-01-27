@@ -565,7 +565,7 @@ app.post("/publish", async (req, res) => {
       publicKey,
       hash,
       monitoringAddress,
-      "publish"
+      "publishText"
     );
     busy = false;
     res.send(txid);
@@ -599,7 +599,7 @@ app.post("/publishFile", async (req, res) => {
       publicKey,
       hash,
       monitoringAddress,
-      "publish"
+      "publishFile"
     );
 
     busy = false;

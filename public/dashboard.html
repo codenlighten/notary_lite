@@ -528,8 +528,8 @@
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onload = () => {
-            const hash = hashData(reader.result);
-            const signature = signData(reader.result);
+            const hash = hashData(reader.result.split(",")[1]);
+            const signature = signData(reader.result.split(",")[1]);
             console.log(hash.toString("hex"));
             console.log(signature);
             sendData(
