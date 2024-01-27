@@ -441,19 +441,6 @@
       document.getElementById("load").addEventListener("click", function () {
         let txid = document.getElementById("txid").value;
         document.getElementById("opreturn").innerHTML = "";
-        found = false;
-        // close scanner
-        if (html5QrCode) {
-          html5QrCode
-            .stop()
-            .then(() => {
-              console.log("QR Scanning stopped.");
-              document.getElementById("scanner-message").innerText = "";
-            })
-            .catch((err) => {
-              console.error("Unable to stop scanning.", err);
-            });
-        }
         getTxInfo(txid).then((txinfo) => {
           displayOpReturn(txinfo);
         });
