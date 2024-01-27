@@ -421,6 +421,8 @@
               if (txid.length == 64) {
                 getTxInfo(txid).then((txinfo) => {
                   displayOpReturn(txinfo);
+                  document.getElementById("scanner-message").innerText =
+                    "loading...";
                   //close scanner
                   document.getElementById("stop-scan").click();
                 });
