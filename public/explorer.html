@@ -421,10 +421,12 @@
               if (txid.length == 64) {
                 getTxInfo(txid).then((txinfo) => {
                   displayOpReturn(txinfo);
+                  //close scanner
+                  document.getElementById("stop-scan").click();
                 });
-                if (confirm("Do you want to check blockchain?")) {
-                  window.open(qrCodeMessage, "_blank");
-                }
+                // if (confirm("Do you want to check blockchain?")) {
+                //   window.open(qrCodeMessage, "_blank");
+                // }
               }
             }
           },
