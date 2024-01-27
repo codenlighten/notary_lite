@@ -425,6 +425,7 @@
               if (txid.length == 64) {
                 getTxInfo(txid).then((txinfo) => {
                   displayOpReturn(txinfo);
+                  document.getElementById("scanner").innerHTML = "";
                 });
                 found = true;
               }
@@ -443,6 +444,7 @@
         document.getElementById("opreturn").innerHTML = "";
         getTxInfo(txid).then((txinfo) => {
           displayOpReturn(txinfo);
+          document.getElementById("scanner").innerHTML = "";
         });
       });
 
