@@ -236,6 +236,7 @@
           let element = "";
           if (mimeType_ascii == "text/plain") {
             element = document.createElement("p");
+            element.innerText = hex2a(op_return_hex);
           } else if (mimeType_ascii == "image/png") {
             element = document.createElement("img");
             element.setAttribute("src", "data:image/png;base64," + base64);
@@ -252,6 +253,19 @@
               "data:application/pdf;base64," + base64
             );
           } else if (mimeType_ascii == "application/json") {
+            element = document.createElement("p");
+            element.innerText = hex2a(op_return_hex);
+          } //video/mp4
+          else if (mimeType_ascii == "video/mp4") {
+            element = document.createElement("video");
+            element.setAttribute("controls", "controls");
+            element.setAttribute("src", "data:video/mp4;base64," + base64);
+          } //audio
+          else if (mimeType_ascii == "audio/mpeg") {
+            element = document.createElement("audio");
+            element.setAttribute("controls", "controls");
+            element.setAttribute("src", "data:audio/mpeg;base64," + base64);
+          } else {
             element = document.createElement("p");
             element.innerText = hex2a(op_return_hex);
           }
