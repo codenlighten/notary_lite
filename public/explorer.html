@@ -172,6 +172,26 @@
         display: block;
         margin: 0 auto;
       }
+      #opreturn {
+        margin: 0;
+        padding: 0;
+      }
+
+      @media (max-width: 768px) {
+        .main {
+          padding: 10px;
+        }
+        #logo {
+          width: 50px;
+          height: 50px;
+        }
+        h1 {
+          font-size: 1.5rem;
+        }
+        h2 {
+          font-size: 1.2rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -198,6 +218,24 @@
     <script>
       //check for op_return and return op_return if true
       const Buffer = bsv.deps.Buffer;
+      const verifyData = (data, sig, publicKeyString) => {
+        try {
+          //der format public key
+          const publicKey = bsv.PublicKey.fromHex(publicKeyString);
+          // Use the hash buffer directly
+          const hashBuffer = bsv.crypto.Hash.sha256(Buffer.from(data));
+          const signature = bsv.crypto.Signature.fromString(sig);
+          const verified = bsv.crypto.ECDSA.verify(
+            hashBuffer,
+            signature,
+            publicKey
+          );
+          return verified;
+        } catch (error) {
+          console.error("Error in verifyData:", error.message);
+          return false;
+        }
+      };
       function getTxInfo(txid) {
         return fetch(`https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`)
           .then((response) => response.text())
@@ -223,6 +261,10 @@
         //remove first element
         op_return_split.shift();
         console.log(op_return_split);
+        let element = "";
+        let aipCheck = false;
+        let verified = false;
+        let verifiedEl = document.createElement("p");
         if (op_return_split[0] == "OP_RETURN") {
           let appId_hex = op_return_split[1];
           let appId_ascii = hex2a(appId_hex);
@@ -233,7 +275,40 @@
           let mimeType_ascii = hex2a(mimeType_hex);
           console.log(appId_ascii, mimeType_ascii, op_return_hex);
           //create element based on mimeType
-          let element = "";
+
+          if (op_return_split[11] && hex2a(op_return_split[11]) == "AIP") {
+            console.log("AIP");
+            aipCheck = true;
+            const pubKeyString = op_return_split[13];
+            const publicKey = hex2a(pubKeyString);
+            console.log(publicKey);
+            const sign = op_return_split[14];
+            const signature = hex2a(sign);
+            const message = hex2a(op_return_split[2]);
+            console.log(message, signature, publicKey);
+            const verified = verifyData(message, signature, publicKey);
+            if (verified) {
+              console.log("Signature verified");
+              //display verified
+              verifiedEl.innerHTML = `Signature verified by ${publicKey}`;
+              verifiedEl.style.color = "green";
+              verifiedEl.style.fontWeight = "bold";
+              //padding 10px
+              verifiedEl.style.padding = "10px";
+              document.getElementById("opreturn").appendChild(verifiedEl);
+            } else {
+              console.log("Signature verification failed");
+              //display not verified
+              verifiedEl.innerHTML = `Signature verification failed by ${publicKey}`;
+              verifiedEl.style.color = "red";
+              verifiedEl.style.fontWeight = "bold";
+              //padding 10px
+              verifiedEl.style.padding = "10px";
+
+              document.getElementById("opreturn").appendChild(verifiedEl);
+            }
+          }
+
           if (mimeType_ascii == "text/plain") {
             element = document.createElement("p");
             element.innerText = hex2a(op_return_hex);
