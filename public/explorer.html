@@ -284,7 +284,8 @@
             console.log(publicKey);
             const sign = op_return_split[14];
             const signature = hex2a(sign);
-            const message = hex2a(op_return_split[2]);
+            const message =
+              mimeType_ascii == "text/plain" ? hex2a(op_return_hex) : base64;
             console.log(message, signature, publicKey);
             const verified = verifyData(message, signature, publicKey);
             if (verified) {
