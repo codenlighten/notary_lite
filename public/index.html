@@ -234,6 +234,7 @@
       <div id="buttonChoices">
         <button id="showRegistration">Register</button>
         <button id="showLogin">Login</button>
+        <button id="explorer">Transaction Explorer</button>
       </div>
       <div class="forms" id="registration">
         <h2>Register ID</h2>
@@ -645,6 +646,9 @@
       document.getElementById("logoutButton").addEventListener("click", () => {
         localStorage.clear();
         location.href = "/";
+      });
+      document.getElementById("explorer").addEventListener("click", () => {
+        location.href = "/explorer";
       });
     </script>
   </body>
