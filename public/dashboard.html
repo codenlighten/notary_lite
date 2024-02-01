@@ -135,22 +135,29 @@
     }
 
     p {
-      background-color: #e9ecef;
+      background-color: black;
       padding: 10px;
       border-radius: 5px;
+      color: white;
     }
     .result {
       word-break: break-all;
       display: none;
     }
     #keys {
-      background-color: #e9ecef;
+      background-color: black;
       padding: 10px;
       border-radius: 5px;
       word-wrap: break-word;
+      color: white;
     }
     #keys p {
       margin: 0;
+      /* margin: 10px 0; */
+      color: white;
+    }
+    #keys h2 {
+      color: white;
     }
     #logo {
       display: block;
@@ -193,6 +200,18 @@
       background-color: #956134; /* Primary color for buttons */
       color: white;
     }
+    #copyright {
+      text-align: center;
+      margin-top: 20px;
+      background-color: white;
+      color: #333;
+    }
+    .hidden {
+      display: none;
+    }
+    #loadingStatus {
+      text-align: center;
+    }
     @media (max-width: 600px) {
       .mainContainer {
         padding: 10px;
@@ -231,6 +250,9 @@
           <strong>Verified:</strong>
           <span id="verified"></span>
         </p>
+      </div>
+      <div class="hidden" id="loadingStatus">
+        <p>Loading...</p>
       </div>
       <div id="qrGeneration">
         <h2>QR Code</h2>
@@ -285,6 +307,14 @@
     </div>
     <script src="encryption.js"></script>
     <script>
+      const changeLoadingStatus = (status) => {
+        if (status) {
+          document.getElementById("loadingStatus").style.display = "block";
+        } else {
+          document.getElementById("loadingStatus").style.display = "none";
+        }
+      };
+      changeLoadingStatus(false);
       const Buffer = bsv.deps.Buffer;
       const generateKeys = () => {
         if (address && !confirm("Generate new keys?")) {
@@ -550,6 +580,7 @@
         });
 
       function sendData(url, data, resultElementId, txStatus) {
+        changeLoadingStatus(true);
         fetch(url, {
           method: "POST",
           headers: {
@@ -589,6 +620,7 @@
             a.target = "_blank";
             a.innerHTML = `https://plugins.whatsonchain.com/api/plugin/main/${data}`;
             document.getElementById("qrGeneration").appendChild(a);
+            changeLoadingStatus(false);
           })
           .catch((error) => {
             console.error("Error:", error);

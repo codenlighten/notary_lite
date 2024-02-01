@@ -139,10 +139,12 @@
     button:hover {
       background-color: #77471c; /* Slightly darker shade for hover effect */
     }
-    p {
-      background-color: #e9ecef;
+    p,
+    #publishResult {
+      background-color: black;
       padding: 10px;
       border-radius: 5px;
+      color: white;
     }
     .result {
       word-break: break-all;
@@ -167,10 +169,11 @@
     }
     #message {
       display: none;
-      background-color: #e9ecef;
+      background-color: black;
       padding: 10px;
       border-radius: 5px;
       margin-top: 20px;
+      color: white;
     }
     #message a {
       color: #956134;
@@ -193,6 +196,12 @@
       cursor: pointer;
       padding: 10px;
       border-radius: 5px;
+    }
+    #copyright {
+      text-align: center;
+      margin-top: 20px;
+      background-color: white;
+      color: #333;
     }
 
     @media (max-width: 600px) {
@@ -276,7 +285,9 @@
         <button id="logoutButton">Logout</button>
       </div>
       <!-- copyright 2024 NotaryHash and SmartLedger -->
-      <p>&copy; 2024 NotaryHash and SmartLedger. All rights reserved.</p>
+      <p id="copyright">
+        &copy; 2024 NotaryHash and SmartLedger. All rights reserved.
+      </p>
     </div>
     <script src="encryption.js"></script>
     <script>
