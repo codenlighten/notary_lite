@@ -726,6 +726,28 @@ app.get("/api/v1/members", async (req, res) => {
   }
 });
 
+app.post("/api/v1/data", async (req, res) => {
+  try {
+    const data = req.body.data;
+    const signature = req.body.signature;
+    const publicKey = req.body.publicKey;
+    const hash = hashData(data);
+    const txid = await publishOpReturn(
+      "text/plain",
+      data,
+      signature,
+      publicKey,
+      hash,
+      monitoringAddress,
+      "data"
+    );
+    res.send({ txid, hash, publicKey });
+  } catch (e) {
+    console.log(e);
+    res.send("error");
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
