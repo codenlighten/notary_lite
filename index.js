@@ -17,7 +17,11 @@ app.use(cors());
 // add notaryhash.com and proofofattestation.com to the list of allowed origins
 app.use(
   cors({
-    origin: ["https://notaryhash.com", "https://proofofattestation.com"],
+    origin: [
+      "https://notaryhash.com",
+      "https://proofofattestation.com",
+      "https://proofofaffidavit.com",
+    ],
   })
 );
 app.use(express.static(path.join(__dirname, "public")));
