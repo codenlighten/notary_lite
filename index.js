@@ -4,12 +4,22 @@ const fetch = require("node-fetch");
 const express = require("express");
 const { generateKeys } = require("./keys");
 //encryption crypto module
+const cors = require("cors");
 const crypto = require("crypto");
 const app = express();
+
+// https://notaryhash.com and https://proofofattestation.com/
 const port = process.env.PORT || 3000;
 const path = require("path");
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(cors());
+// add notaryhash.com and proofofattestation.com to the list of allowed origins
+app.use(
+  cors({
+    origin: ["https://notaryhash.com", "https://proofofattestation.com"],
+  })
+);
 app.use(express.static(path.join(__dirname, "public")));
 const fs = require("fs");
 const {
